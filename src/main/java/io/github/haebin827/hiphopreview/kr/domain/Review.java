@@ -20,10 +20,12 @@ public class Review extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "album_id", referencedColumnName = "id")
     private Album album;
@@ -37,6 +39,12 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private float rating;
 
+    @Column(nullable = false)
+    private int likes;
+
+    @Column(nullable = false)
+    private int dislikes;
+
     @LastModifiedDate
     @Column
     private LocalDateTime modDate;
@@ -46,6 +54,9 @@ public class Review extends BaseEntity {
 
     @PrePersist
     protected void onCreate() {
-        isDeleted = false;
+        this.isDeleted = false;
+        this.likes = 0;
+        this.dislikes = 0;
     }
+
 }

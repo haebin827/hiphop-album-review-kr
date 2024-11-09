@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
+
     private Integer id;
 
     @NotEmpty
@@ -26,6 +27,8 @@ public class UserDTO {
     private String username;
 
     private String bio;
+
+    private String instagramId;
 
     @NotNull
     private List<ReviewDTO> reviews;

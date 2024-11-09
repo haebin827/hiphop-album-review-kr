@@ -1,10 +1,7 @@
-package io.github.haebin827.hiphopreview.kr.repositoryTests;
+package io.github.haebin827.hiphopreview.kr.repository;
 
 import io.github.haebin827.hiphopreview.kr.domain.Album;
 import io.github.haebin827.hiphopreview.kr.domain.Artist;
-import io.github.haebin827.hiphopreview.kr.repository.AlbumRepository;
-import io.github.haebin827.hiphopreview.kr.repository.ArtistRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;

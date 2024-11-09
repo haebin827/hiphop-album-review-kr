@@ -34,6 +34,9 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
+    @Column(unique = true)
+    private String instagramId;
+
     //private String profilePicture;
 
     @OneToMany(mappedBy = "user")

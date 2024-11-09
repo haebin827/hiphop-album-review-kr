@@ -34,4 +34,13 @@ public class ReviewDTO {
     private LocalDateTime modDate;
 
     private boolean isDeleted;
+
+    /*public Integer getUserId() {
+        return user.getId();
+    }
+
+
+    public Integer getAlbumId() {
+        return album.getId();
+    }*/
 }
