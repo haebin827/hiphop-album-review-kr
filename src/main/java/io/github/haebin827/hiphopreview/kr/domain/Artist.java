@@ -2,8 +2,11 @@ package io.github.haebin827.hiphopreview.kr.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Table(name="artists")
-public class Artist extends BaseEntity {
+public class Artist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,13 +27,40 @@ public class Artist extends BaseEntity {
     private String name;
 
     @Column
-    private LocalDate bornedIn;
+    private String gender;
 
     @Column
-    private String nationality;
+    private String type;
+
+    @Column
+    private String bornedIn; // XXXX & XXXX-XX-XX
+
+    @Column
+    private String country;
+
+    @Column(length = 5000)
+    private String tags;
+
+    @Column
+    private String image;
+
+    @Column
+    private String s3url;
+
+    @Column(unique = true)
+    private String uuid;
+
+    @CreatedDate
+    @Column(name = "regDate", updatable = false)
+    private LocalDateTime regDate;
 
     @ToString.Exclude
-    @ManyToMany(mappedBy = "artists")
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<Album> albums = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        regDate = LocalDateTime.now();
+    }
 
 }

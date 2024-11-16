@@ -2,6 +2,7 @@ package io.github.haebin827.hiphopreview.kr.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Table(name="reviews")
-public class Review extends BaseEntity {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +31,7 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "album_id", referencedColumnName = "id")
     private Album album;
 
-    @Column(nullable = false)
+    @Column(length = 50, nullable = false)
     private String title;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -45,6 +46,10 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private int dislikes;
 
+    @CreatedDate
+    @Column(name = "regDate", updatable = false)
+    private LocalDateTime regDate;
+
     @LastModifiedDate
     @Column
     private LocalDateTime modDate;
@@ -57,6 +62,7 @@ public class Review extends BaseEntity {
         this.isDeleted = false;
         this.likes = 0;
         this.dislikes = 0;
+        regDate = LocalDateTime.now();
     }
 
 }

@@ -30,7 +30,7 @@ public class AlbumRepositoryTest {
         albumRepo.save(album);
     }
 
-    @Test
+    /*@Test
     public void testSaveAlbumWithArtist() {
         // 연관된 엔티티인 Artist 생성 및 저장
         Artist artist = Artist.builder()
@@ -59,6 +59,6 @@ public class AlbumRepositoryTest {
         Album album = albumRepo.findById(2).orElseThrow();
         Hibernate.initialize(album.getArtists());  // 컬렉션을 초기화
         log.info("album info: " + album);
-    }
+    }*/
 
 }

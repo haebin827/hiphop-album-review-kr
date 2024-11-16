@@ -2,7 +2,9 @@ package io.github.haebin827.hiphopreview.kr.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Table(name="albums")
-public class Album extends BaseEntity {
+public class Album {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,20 +87,45 @@ public class Album extends BaseEntity {
                 참조할 대상 컬럼을 지정: 기본적으로는 대상 엔티티의 기본 키가 참조되지만, referencedColumnName 속성을 사용해 Artist 엔티티의 특정 필드를 참조하도록 할 수도 있음.
     */
 
-    @ManyToMany
+    /*@ManyToMany
     @JoinTable(
             name = "album_artist",
-            joinColumns = @JoinColumn(name = "album_id"),
-            inverseJoinColumns = @JoinColumn(name = "artist_id")
+            joinColumns = @JoinColumn(name = "album_id", referencedColumnName = "artistUuid"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id", referencedColumnName = "uuid")
     )
     @Builder.Default // 필드 초기화가 @Builder에서도 적용되도록 하기 위해 @Builder.Default를 사용 => JUnit Test 결과 출력용
     @ToString.Exclude
-    private List<Artist> artists = new ArrayList<>();
+    private List<Artist> artists = new ArrayList<>();*/
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "artist_id", referencedColumnName = "uuid")
+    private Artist artist;
+
+    @Column
+    private String primaryType;
+
+    @Column
+    private String secondaryType;
+
+    @Column
+    private String year;
+
+    @Column
     private float rating;
 
-    @Column(nullable = false)
+    //@Column
+    //private int tracks;
+
+    @Column
+    private String link;
+
+    @Column
+    private String image;
+
+    @Column
+    private String s3url;
+
+    @Column
     private boolean isActive;
 
     /*
@@ -133,10 +160,18 @@ public class Album extends BaseEntity {
                 - @PrePersist는 JPA의 라이프사이클 콜백 어노테이션 중 하나로, 엔티티가 영속성 컨텍스트에 저장되기 직전에 실행됨.
                 - Spring Data JPA의 save() 메서드를 호출하면 엔티티가 영속화되는 시점에 자동으로 @PrePersist 메서드가 실행됨.
     */
-    
+
+    @Column(unique = true)
+    private String uuid;
+
+    @CreatedDate
+    @Column(name = "regDate", updatable = false)
+    private LocalDateTime regDate;
+
     @PrePersist
     protected void onCreate() {
         this.isActive = true;
         this.rating = 0f;
+        this.regDate = LocalDateTime.now();
     }
 }

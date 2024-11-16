@@ -16,6 +16,7 @@ public class PageResponseDTO<E> {
 
     // Start page number
     private int start;
+
     // End page number;
     private int end;
 

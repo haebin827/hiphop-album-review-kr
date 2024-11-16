@@ -2,8 +2,10 @@ package io.github.haebin827.hiphopreview.kr.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -13,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Table(name="users")
-public class User extends BaseEntity {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +24,11 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
-
-    @Column(nullable = false, unique = true)
+    @Column(length=15, nullable = false, unique = true)
     private String username;
+
+    @Column(length=15, nullable = false, unique = true)
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
@@ -37,17 +39,29 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private String instagramId;
 
-    //private String profilePicture;
+    @Column
+    private String profilePicture;
+
+    @CreatedDate
+    @Column(name = "regDate", updatable = false)
+    private LocalDateTime regDate;
 
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> following;
+
+    @OneToMany(mappedBy = "following")
+    private List<Follow> followers;
 
     @OneToMany(mappedBy = "user")
     private List<AlbumRequest> albumRequests;
 
     @PrePersist
-    public void onCreate() {
+    protected void onCreate() {
         this.bio = "";
+        regDate = LocalDateTime.now();
     }
 
 }

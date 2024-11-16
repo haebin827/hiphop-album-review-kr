@@ -1,11 +1,18 @@
 HELP.md
+/files
+/static/
+test/
 viewDesignSketches.pptx
 ~$viewDesignSketches.pptx
+*.txt
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+### Security ###
+application-aws.properties
 
 ### STS ###
 .apt_generated

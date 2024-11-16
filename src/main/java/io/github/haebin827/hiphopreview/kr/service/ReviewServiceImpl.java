@@ -28,8 +28,8 @@ public class ReviewServiceImpl implements  ReviewService {
         User user = userRepository.findById(reviewDTO.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + reviewDTO.getUser().getId()));
 
-        Album album = albumRepository.findById(reviewDTO.getAlbum().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Album not found with id: " + reviewDTO.getAlbum().getId()));
+        Album album = albumRepository.findById(reviewDTO.getAlbumId())
+                .orElseThrow(() -> new IllegalArgumentException("Album not found with id: " + reviewDTO.getAlbumId()));
 
         Review review = mm.map(reviewDTO, Review.class);
 

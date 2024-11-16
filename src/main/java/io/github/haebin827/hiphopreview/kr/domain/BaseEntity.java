@@ -1,3 +1,4 @@
+/*
 package io.github.haebin827.hiphopreview.kr.domain;
 
 import jakarta.persistence.Column;
@@ -18,7 +19,10 @@ abstract class BaseEntity {
     @Column(name = "regDate", updatable = false)
     private LocalDateTime regDate;
 
-    /*@LastModifiedDate
+    */
+/*@LastModifiedDate
     @Column(name = "modDate")
-    private LocalDateTime modDate;*/
+    private LocalDateTime modDate;*//*
+
 }
+*/
