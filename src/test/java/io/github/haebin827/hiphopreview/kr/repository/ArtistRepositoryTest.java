@@ -37,7 +37,7 @@ public class ArtistRepositoryTest {
         System.out.println("Name: " + artist.getName());
         System.out.println("Gender: " + artist.getGender());
         System.out.println("Type: " + artist.getType());
-        System.out.println("Nationality: " + artist.getNationality());
+        System.out.println("Country: " + artist.getCountry());
 
         // Fetch and print associated albums
         System.out.println("Albums:");
