@@ -54,11 +54,11 @@ public class ArtistRequest {
     private boolean isProcessed;
 
     @CreatedDate
-    @Column(name = "regDate", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime regDate;
 
     @PrePersist
-    public void prePersist() {
+    public void onCreate() {
         regDate = LocalDateTime.now();
     }
 }

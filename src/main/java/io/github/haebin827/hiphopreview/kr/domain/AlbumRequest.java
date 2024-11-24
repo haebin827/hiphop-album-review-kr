@@ -46,7 +46,7 @@ public class AlbumRequest {
     private String image;
 
     @CreatedDate
-    @Column(name = "regDate", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime regDate;
 
     @PrePersist

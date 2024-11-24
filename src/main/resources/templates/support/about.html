@@ -1,0 +1,69 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout/base.html}">
+
+<head>
+    <!-- FontAwesome CDN 추가 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+
+<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 100px; margin-bottom: 200px;">
+    <div>
+        <h3 class="mb-2" style="display: inline-block; color: #333;">ABOUT</h3>
+        <hr class="mb-6" style="margin-bottom: 40px; margin-top: 40px; border: 1px solid #555;">
+    </div>
+
+    <div style="font-size: 1.1rem; line-height: 1.8; color: #444; padding: 0 20px;">
+        <p>이 사이트는요,</p>
+        <p style="margin-top: 20px;">
+            유튜브 <a href="https://www.youtube.com/@HHSC2" target="_blank" style="color: #007bff; text-decoration: none;"><strong>"흔한 센충이"</strong></a> <i class="fab fa-youtube" style="color: #ff0000;"></i> 채널을 운영하고 있는 흔한 음악덕후 대학생이 포트폴리오 목적으로 만든 힙합 음반 리뷰 사이트입니다. <br>첫 배포라 부족한 점이 많아도 너그럽게 이해해주시고, 혹 사용하시다가 불편한 점이나 오류가 발견될 시 <a href="/support/feedback" style="text-decoration: underline; color: inherit;"><strong>피드백</strong></a>으로 문의 주시면<br>최대한 빠르게 고쳐보도록 하겠습니다.
+            <br><br>모두 아갓러뽀얄~
+        </p>
+
+        <p style="margin-top: 50px; margin-bottom: 40px;">
+            <strong style="font-size: 1.4rem; margin-bottom: 10px; display: inline-block;">광고 / 문의 / 파트너쉽</strong><br>
+            모두 <a href="mailto:nhb0702@naver.com" style="color: #007bff;">nhb0702@naver.com</a> 으로 부탁드립니다!
+        </p>
+
+        <p style="margin-top: 50px; margin-bottom: 20px;">
+            <strong style="font-size: 1.4rem; margin-bottom: 10px; display: inline-block;">API 제공</strong><br>
+            본 사이트는 <b>MusicBrainz API</b>의 데이터를 일부 활용하고 있습니다.<br>
+            더 자세한 내용은 <a href="https://musicbrainz.org/" target="_blank" style="color: #007bff;">MusicBrainz</a> 사이트를 방문해 주세요.
+        </p>
+
+
+        <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
+            <p>ROLE_USER 사용자만 볼 수 있는 콘텐츠</p>
+        </div>
+
+        <p th:if="${#authentication != null and #authentication.principal != null}" th:text="${#authentication.principal.username}"></p><br>
+
+        <!-- User만 볼 수 있는 컴포넌트 -->
+        <div th:if="${isUser}">
+            <p>This content is visible to users only.</p>
+        </div>
+
+        <!--<p th:if="${#authentication != null and #authentication.principal != null}" th:text="${#authentication.principal.nickname}"></p><br>
+
+
+        <div th:if="${#authentication != null and #authentication.principal != null}">
+            <p th:if="${#authentication.principal instanceof T(io.github.haebin827.hiphopreview.kr.util.CustomUserDetails)}"
+               th:text="${#authentication.principal.nickname}">
+                닉네임
+            </p>
+            <p th:unless="${#authentication.principal instanceof T(io.github.haebin827.hiphopreview.kr.util.CustomUserDetails)}">
+                익명 사용자
+            </p>
+        </div>-->
+
+
+
+        <p th:text="${#authentication.principal}">Principal Object</p>
+
+    </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>
+</html>

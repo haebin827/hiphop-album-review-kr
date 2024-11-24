@@ -165,7 +165,7 @@ public class Album {
     private String uuid;
 
     @CreatedDate
-    @Column(name = "regDate", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime regDate;
 
     @PrePersist

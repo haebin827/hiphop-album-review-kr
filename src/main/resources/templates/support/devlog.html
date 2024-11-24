@@ -1,0 +1,30 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/base.html}">
+
+<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 130px; margin-bottom: 200px;">
+    <div>
+        <h3 class="mb-2" style="display: inline-block;">개발 일지</h3>
+        <hr class="mb-6" style="margin-bottom: 50px; margin-top: 50px;">
+    </div>
+    <!-- 2열 레이아웃 -->
+    <div style="display: flex; justify-content: space-between; margin-top: 20px; padding: 10px;">
+        <div style="flex: 1; text-align: center; margin-left: 150px;">
+            <h5 style="margin-bottom: 50px;">날짜</h5>
+            <p>2024-11-19</p>
+            <p>2024-11-18</p>
+            <p>2024-11-17</p>
+        </div>
+        <div style="flex: 2;">
+            <h5 style="margin-bottom: 50px;">개발 내용</h5>
+            <p>프로젝트 구조 개선 및 성능 최적화.</p>
+            <p>사용자 인터페이스 개선 및 테스트 수행.</p>
+            <p>데이터베이스 마이그레이션 및 버그 수정.</p>
+        </div>
+    </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>
+</html>

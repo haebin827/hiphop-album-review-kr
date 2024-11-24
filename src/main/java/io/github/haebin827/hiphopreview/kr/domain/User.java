@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,14 +37,17 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
-    @Column(unique = true)
+    @Column
     private String instagramId;
+
+    @Column
+    private String email;
 
     @Column
     private String profilePicture;
 
     @CreatedDate
-    @Column(name = "regDate", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime regDate;
 
     @OneToMany(mappedBy = "user")
@@ -58,10 +62,22 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<AlbumRequest> albumRequests;
 
+    @ManyToMany(fetch = FetchType.EAGER) // 즉시 로딩
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles = new ArrayList<>();
+
+    // 역할 추가 메서드
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
     @PrePersist
     protected void onCreate() {
         this.bio = "";
-        regDate = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
     }
-
 }

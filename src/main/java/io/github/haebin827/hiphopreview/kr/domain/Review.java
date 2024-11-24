@@ -47,7 +47,7 @@ public class Review {
     private int dislikes;
 
     @CreatedDate
-    @Column(name = "regDate", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime regDate;
 
     @LastModifiedDate
@@ -62,7 +62,7 @@ public class Review {
         this.isDeleted = false;
         this.likes = 0;
         this.dislikes = 0;
-        regDate = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
     }
 
 }

@@ -13,6 +13,7 @@ build/
 
 ### Security ###
 application-aws.properties
+application.properties
 
 ### STS ###
 .apt_generated

@@ -51,7 +51,7 @@ public class Artist {
     private String uuid;
 
     @CreatedDate
-    @Column(name = "regDate", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime regDate;
 
     @ToString.Exclude
@@ -59,7 +59,7 @@ public class Artist {
     private List<Album> albums = new ArrayList<>();
 
     @PrePersist
-    public void prePersist() {
+    public void onCreate() {
         regDate = LocalDateTime.now();
     }
 

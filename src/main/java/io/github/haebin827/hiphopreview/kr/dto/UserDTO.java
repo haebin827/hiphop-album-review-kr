@@ -1,9 +1,8 @@
 package io.github.haebin827.hiphopreview.kr.dto;
 
 import io.github.haebin827.hiphopreview.kr.domain.Follow;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,6 +40,10 @@ public class UserDTO {
     private String bio;
 
     private String instagramId;
+
+    @NotBlank(message = "이메일은 필수 입력 항목입니다.")
+    @Email(message = "올바른 이메일 형식을 입력해주세요.")
+    private String email;
 
     private MultipartFile profilePicture;
 

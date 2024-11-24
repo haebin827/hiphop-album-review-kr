@@ -1,0 +1,125 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout/base.html}">
+
+<head>
+    <!-- FontAwesome CDN 추가 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .was-validated .form-control:invalid {
+            border-color: #dc3545; /* 붉은색 테두리 */
+        }
+
+        .was-validated .form-control:invalid ~ .invalid-feedback {
+            display: block; /* invalid-feedback 표시 */
+        }
+
+        .required-label::after {
+            content: " *"; /* 필수 항목 별표 */
+            color: red; /* 빨간색 별표 */
+        }
+    </style>
+</head>
+
+<div layout:fragment="content" class="col-9 mx-auto" style="margin-top: 60px; margin-bottom: 100px;">
+
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-md-8 mx-auto">
+                <div style="font-size: 1.5rem; text-align: center;">
+                    회원가입
+                </div>
+                <hr class="mb-4">
+                <div class="card-body">
+
+                    <form th:action="@{/auth/register}" method="post" style="width:60%;margin:50px auto;" novalidate id="registerForm">
+
+                        <div class="form-group">
+                            <label for="username" class="required-label">아이디</label>
+                            <div class="col mb-4">
+                                <input type="text" class="form-control" name="username" id="username" placeholder="아이디"
+                                       th:value="${userDTO != null} ? ${userDTO.username} : ''" required/>
+                                <div class="invalid-feedback">아이디는 필수 항목입니다.</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="required-label">비밀번호</label>
+                            <div class="col mb-4">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" name="password" id="password" placeholder="비밀번호" required/>
+                                    <div class="invalid-feedback">비밀번호는 필수 항목입니다.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm" class="required-label">비밀번호 재확인</label>
+                            <div class="col mb-4">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" name="confirm" id="confirm" placeholder="비밀번호 재확인" required/>
+                                    <div class="invalid-feedback">비밀번호를 다시 확인해주세요.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name" class="required-label">이름</label>
+                            <div class="col mb-4">
+                                <input type="text" class="form-control" name="name" id="name" placeholder="이름"
+                                       th:value="${userDTO != null} ? ${userDTO.name} : ''" required/>
+                                <div class="invalid-feedback">이름은 필수 항목입니다.</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nickname" class="required-label">닉네임</label>
+                            <div class="col mb-5">
+                                <input type="text" class="form-control" name="nickname" id="nickname" placeholder="닉네임"
+                                       th:value="${userDTO != null} ? ${userDTO.nickname} : ''" required/>
+                                <div class="invalid-feedback">닉네임은 필수 항목입니다.</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="required-label">이메일</label>
+                            <div class="col mb-4">
+                                <input type="email" class="form-control" name="email" id="email" placeholder="이메일"
+                                       th:value="${userDTO != null} ? ${userDTO.email} : ''" required/>
+                                <div class="invalid-feedback">이메일은 필수 항목입니다.</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="instagramId">인스타 아이디</label>
+                            <div class="col mb-4">
+                                <input type="text" class="form-control" name="instagramId" id="instagramId" placeholder="인스타 아이디 (@ 제외)"
+                                       th:value="${userDTO != null} ? ${userDTO.instagramId} : ''" />
+                            </div>
+                        </div>
+
+                        <div class="form-group float-end">
+                            <button type="submit" class="btn btn-primary">가입</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+        const form = this;
+        if (!form.checkValidity()) {
+            event.preventDefault(); // 기본 제출 동작 방지
+            event.stopPropagation(); // 이벤트 전파 중단
+            console.log("Form is invalid");
+        }
+        form.classList.add('was-validated'); // 폼에 'was-validated' 클래스 추가
+    });
+
+</script>
+</html>

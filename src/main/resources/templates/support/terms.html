@@ -1,0 +1,24 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout/base.html}">
+
+<head>
+    <!-- FontAwesome CDN 추가 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+
+<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 100px; margin-bottom: 200px;">
+    <div>
+        <h3 class="mb-2" style="display: inline-block; color: #333;">이용약관</h3>
+        <hr class="mb-6" style="margin-bottom: 40px; margin-top: 40px; border: 1px solid #555;">
+    </div>
+
+    <div style="font-size: 1.1rem; line-height: 1.8; color: #444; padding: 0 20px;">
+        <p>프사 이상한 거 하면 제 기준에서 탈퇴시킵니다.
+    </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>
+</html>

@@ -8,26 +8,22 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "follows", indexes = {
-        @Index(name = "idx_follower_following", columnList = "follower_id, following_id", unique = true)
-})
-public class Follow {
+@ToString
+@Table(name="feedbacks")
+public class Feedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "follower_id", nullable = false)
-    private User follower;
+    @Column(length = 50, nullable = false)
+    private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "following_id", nullable = false)
-    private User following;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
 
     @CreatedDate
     @Column(updatable = false)
@@ -35,6 +31,6 @@ public class Follow {
 
     @PrePersist
     protected void onCreate() {
-        regDate = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
     }
 }

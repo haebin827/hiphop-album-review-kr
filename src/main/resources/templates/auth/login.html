@@ -1,0 +1,59 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout/base.html}">
+
+<head>
+    <!-- FontAwesome CDN 추가 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 로그인 버튼 스타일 */
+        .btn-yellow {
+            background-color: #FFD700; /* 진한 노랑 */
+            color: black;
+            border: none;
+        }
+
+        .btn-yellow:hover {
+            background-color: #FFC700; /* hover 시 조금 더 어두운 노랑 */
+        }
+    </style>
+</head>
+
+<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 120px; margin-bottom: 180px;">
+
+    <form th:action="@{/auth/login}" method="post" style="width:30%;margin:80px auto;">
+
+        <!-- Email input -->
+        <div data-mdb-input-init class="form-outline mb-4">
+            <input type="text" id="username" name="username" class="form-control" placeholder="아이디" />
+        </div>
+
+        <!-- Password input -->
+        <div data-mdb-input-init class="form-outline mb-4">
+            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호"/>
+        </div>
+
+        <!-- 2 column grid layout for inline styling -->
+        <div class="row mb-4">
+            <div class="col">
+                <!-- Simple link -->
+                <a>Forgot password?</a>
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                class="btn btn-yellow btn-block mb-4" style="width: 100%">로그인</button>
+
+        <!-- Register buttons -->
+        <div class="text-center">
+            <p>멤버가 아니셈요? <a th:href="@{/auth/register}">회원가입하기</a></p>
+        </div>
+    </form>
+
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>
+</html>
