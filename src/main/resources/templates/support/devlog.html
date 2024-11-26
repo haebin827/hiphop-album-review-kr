@@ -3,28 +3,132 @@
       xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layout/base.html}">
 
-<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 130px; margin-bottom: 200px;">
-    <div>
-        <h3 class="mb-2" style="display: inline-block;">개발 일지</h3>
-        <hr class="mb-6" style="margin-bottom: 50px; margin-top: 50px;">
-    </div>
-    <!-- 2열 레이아웃 -->
-    <div style="display: flex; justify-content: space-between; margin-top: 20px; padding: 10px;">
-        <div style="flex: 1; text-align: center; margin-left: 150px;">
-            <h5 style="margin-bottom: 50px;">날짜</h5>
-            <p>2024-11-19</p>
-            <p>2024-11-18</p>
-            <p>2024-11-17</p>
+<div layout:fragment="content" class="col-9 mx-auto" style="margin-top: 100px; margin-bottom: 200px;">
+    <!-- Scrollspy navigation -->
+    <nav id="navbar-scrollspy" class="sticky-top px-3 py-2 mx-auto" style="z-index: 1050; text-align: center; width: 60%;">
+        <div class="btn-group" role="group" style="display: inline-flex;">
+            <a class="btn btn-dark" href="#dev-log">개발 일지</a>
+            <a class="btn btn-dark" href="#dev-tools">개발 툴</a>
         </div>
-        <div style="flex: 2;">
-            <h5 style="margin-bottom: 50px;">개발 내용</h5>
-            <p>프로젝트 구조 개선 및 성능 최적화.</p>
-            <p>사용자 인터페이스 개선 및 테스트 수행.</p>
-            <p>데이터베이스 마이그레이션 및 버그 수정.</p>
+    </nav>
+
+    <!-- 개발 일지 Section -->
+    <div id="dev-log" style="margin-top: 100px; text-align: center;">
+        <h3 class="mb-2">개발 일지</h3>
+        <hr class="mb-6" style="margin-bottom: 50px; margin-top: 50px;">
+        <div style="display: flex; justify-content: space-between; margin-top: 20px; padding: 10px;">
+            <div style="flex: 1; text-align: center;">
+                <h5 style="margin-bottom: 50px;">날짜</h5>
+                <p>2024-11-19</p>
+                <p>2024-11-18</p>
+                <p>2024-11-17</p>
+            </div>
+            <div style="flex: 2;">
+                <h5 style="margin-bottom: 50px;">개발 내용</h5>
+                <p>프로젝트 구조 개선 및 성능 최적화.</p>
+                <p>사용자 인터페이스 개선 및 테스트 수행.</p>
+                <p>데이터베이스 마이그레이션 및 버그 수정.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 개발 툴 Section -->
+    <div id="dev-tools" style="margin-top: 150px;">
+        <h3 class="mb-2 text-center">개발 툴</h3>
+        <hr class="mb-6" style="margin-bottom: 50px; margin-top: 50px;">
+
+        <div class="row">
+            <!-- Frontend Tools -->
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5>프론트엔드</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Thymeleaf</li>
+                            <li>Bootstrap</li>
+                            <li>Thymeleaf Layout Dialect</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backend Tools -->
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5>백엔드</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Spring Boot</li>
+                            <li>Spring Data JPA</li>
+                            <li>Spring MVC</li>
+                            <li>Spring Security</li>
+                            <li>ModelMapper</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Tools -->
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5>데이터베이스</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>MySQL</li>
+                            <li>Flyway</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Libraries -->
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5>기타 라이브러리</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Lombok</li>
+                            <li>Thumbnailator</li>
+                            <li>Springfox (Swagger UI)</li>
+                            <li>Apache Tika</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Bootstrap Scrollspy initialization
+        document.body.setAttribute('data-bs-spy', 'scroll');
+        document.body.setAttribute('data-bs-target', '#navbar-scrollspy');
+        document.body.setAttribute('data-bs-offset', '100'); // 여백 추가
+        const scrollSpy = new bootstrap.ScrollSpy(document.body);
+
+        // 버튼 클릭 시 스크롤 이동 시 여백 확보
+        const links = document.querySelectorAll('#navbar-scrollspy a');
+        links.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                const offset = 110; // 상단 여백
+                const targetPosition = target.offsetTop - offset;
+
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
 </script>
-</html>

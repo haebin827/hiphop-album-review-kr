@@ -44,7 +44,10 @@ public class User {
     private String email;
 
     @Column
-    private String profilePicture;
+    private String s3url;
+
+    @Column
+    private String uuid;
 
     @CreatedDate
     @Column(updatable = false)

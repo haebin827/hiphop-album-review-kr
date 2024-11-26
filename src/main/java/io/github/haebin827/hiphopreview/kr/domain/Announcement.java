@@ -27,7 +27,7 @@ public class Announcement {
     private String content;
 
     @Column
-    private boolean isImp;
+    private Boolean isImp;
 
     @Column
     private int views;

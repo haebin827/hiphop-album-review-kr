@@ -49,6 +49,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService  {
 
         // CustomUserDetails 객체 반환
         CustomUserDetails customUserDetails = new CustomUserDetails(
+                user.getId(),
                 user.getUsername(),
                 user.getPassword(),
                 user.getName(),

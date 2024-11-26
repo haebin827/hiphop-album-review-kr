@@ -47,6 +47,8 @@ public class UserDTO {
 
     private MultipartFile profilePicture;
 
+    private String uuid;
+
     private LocalDateTime regDate;
 
     private List<ReviewDTO> reviews;

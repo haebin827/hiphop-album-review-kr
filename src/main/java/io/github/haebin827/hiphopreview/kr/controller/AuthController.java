@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.UUID;
+
 @Controller
 @RequestMapping("/auth")
 @Log4j2
@@ -41,6 +43,8 @@ public class AuthController {
         if (result.hasErrors()) {
             return "/auth/register";
         }
+        String uuid = UUID.randomUUID().toString();
+        userDTO.setUuid(uuid);
         as.registerUser(userDTO);
 
         redirectAttributes.addFlashAttribute("nickname", userDTO.getNickname());

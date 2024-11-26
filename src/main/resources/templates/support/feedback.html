@@ -3,13 +3,66 @@
       xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layout/base.html}">
 
-<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 100px; margin-bottom: 200px;">
+<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 100px; margin-bottom: 150px;">
     <div>
         <h3 class="mb-2" style="display: inline-block; color: #333;">피드백 보내기</h3>
         <hr class="mb-6" style="margin-bottom: 40px; margin-top: 40px; border: 1px solid #555;">
+        <form id="feedbackForm" th:action="@{/support/feedback}" th:object="${feedbackDTO}" method="post" style="text-align: left;" class="col-8 mx-auto needs-validation" novalidate>
+            <!-- 분류 -->
+            <div class="row mb-4 align-items-center">
+                <label for="category" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    분류 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9">
+                    <select id="category" name="category" class="form-select" style="width: 28%;" required>
+                        <option value="">--선택하세요--</option>
+                        <option value="1">오류 리포트</option>
+                        <option value="2">기능 추가</option>
+                        <option value="3">기타</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        분류를 선택해주세요.
+                    </div>
+                </div>
+            </div>
+            <!-- 내용 -->
+            <div class="row mb-4">
+                <label for="content" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    내용 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9">
+                    <textarea id="content" name="content" class="form-control" rows="4" placeholder="피드백은 최대한 구체적으로 적어주세요!" required></textarea>
+                    <div class="invalid-feedback">
+                        내용을 입력해주세요.
+                    </div>
+                    <!--<p class="item field invalid" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+                        &lt;!&ndash; DTO message will be appeared here &ndash;&gt;
+                    </p>-->
+                </div>
+            </div>
+            <!-- 제출 버튼 -->
+            <div class="row">
+                <div class="col-md-9 offset-md-3 text-end">
+                    <button type="submit" class="btn btn-dark rounded-pill">
+                        제출
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
+    // JavaScript를 사용하여 폼 유효성 검사를 수행합니다.
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById('feedbackForm');
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
 </script>
 </html>

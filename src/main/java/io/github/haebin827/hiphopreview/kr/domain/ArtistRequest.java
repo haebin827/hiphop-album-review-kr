@@ -29,7 +29,7 @@ public class ArtistRequest {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column//(nullable = false)
     private String gender;
 
     @Column(nullable = false)
@@ -45,7 +45,7 @@ public class ArtistRequest {
     private String tags;
 
     @Column
-    private String image;
+    private String s3url;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String note;

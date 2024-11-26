@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString//(exclude = "user")
 @Table(name="feedbacks")
 public class Feedback {
 
@@ -19,8 +19,11 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 50, nullable = false)
-    private String title;
+    // 1: 오류 리포트
+    // 2: 기능 추가
+    // 3: 기타
+    @Column
+    private int category;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -28,6 +31,10 @@ public class Feedback {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime regDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @PrePersist
     protected void onCreate() {

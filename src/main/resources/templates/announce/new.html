@@ -1,0 +1,73 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/base.html}">
+
+<div layout:fragment="content" class="col-10 mx-auto" style="margin-top: 100px; margin-bottom: 130px;">
+    <h3>새 공지사항</h3>
+    <hr class="mb-4">
+    <form th:action="@{/announce/new}" method="post" novalidate class="needs-validation" id="announcementForm">
+        <!-- 제목 -->
+        <div class="col-9 mx-auto mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력하세요." required>
+            <div class="invalid-feedback">제목은 필수 입력 항목입니다.</div>
+        </div>
+
+        <!-- 내용 -->
+        <div class="col-9 mx-auto mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" id="content" name="content" rows="10" placeholder="내용을 입력하세요." required></textarea>
+            <div class="invalid-feedback">내용은 필수 입력 항목입니다.</div>
+        </div>
+
+        <!-- 중요 체크박스 -->
+        <div class="col-9 mx-auto mb-3 form-check">
+            <input class="form-check-input" type="checkbox" id="isImp" name="isImp" value="true">
+            <label class="form-check-label" for="isImp">중요</label>
+            <!-- 숨겨진 필드 추가 -->
+            <input type="hidden" id="hiddenIsImp" name="_isImp" value="false">
+        </div>
+
+        <!-- 버튼 그룹 -->
+        <div class="col-9 mx-auto my-4">
+            <div class="d-flex justify-content-end">
+                <div class="btn-group" role="group">
+                    <button type="submit" class="btn btn-outline-dark">저장</button>
+                    <button type="reset" class="btn btn-outline-dark" onclick="resetCheckbox()">초기화</button>
+                    <a th:href="@{/announce/list}" class="btn btn-secondary">뒤로</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('announcementForm');
+
+        form.addEventListener('submit', function (event) {
+            // 폼의 유효성 검사 (체크박스는 제외)
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    });
+
+    function updateCheckboxValue() {
+        const checkbox = document.getElementById('isImp');
+        const hiddenInput = document.getElementById('hiddenIsImp');
+        hiddenInput.value = checkbox.checked ? 'true' : 'false'; // 체크 여부에 따라 hidden 필드 값 설정
+        console.log("Checkbox updated:", hiddenInput.value);
+    }
+
+    function resetCheckbox() {
+        const checkbox = document.getElementById('isImp');
+        const hiddenInput = document.getElementById('hiddenIsImp');
+        checkbox.checked = false;
+        hiddenInput.value = 'false';
+    }
+</script>
+</html>

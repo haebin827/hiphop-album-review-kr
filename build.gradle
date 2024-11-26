@@ -45,6 +45,9 @@ dependencies {
 	implementation 'net.coobird:thumbnailator:0.4.16'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	implementation 'org.apache.tika:tika-core:2.9.0'
+	implementation 'org.apache.tika:tika-parsers:2.9.0'
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
 }
 

@@ -44,19 +44,6 @@
             <p>This content is visible to users only.</p>
         </div>
 
-        <!--<p th:if="${#authentication != null and #authentication.principal != null}" th:text="${#authentication.principal.nickname}"></p><br>
-
-
-        <div th:if="${#authentication != null and #authentication.principal != null}">
-            <p th:if="${#authentication.principal instanceof T(io.github.haebin827.hiphopreview.kr.util.CustomUserDetails)}"
-               th:text="${#authentication.principal.nickname}">
-                닉네임
-            </p>
-            <p th:unless="${#authentication.principal instanceof T(io.github.haebin827.hiphopreview.kr.util.CustomUserDetails)}">
-                익명 사용자
-            </p>
-        </div>-->
-
 
 
         <p th:text="${#authentication.principal}">Principal Object</p>

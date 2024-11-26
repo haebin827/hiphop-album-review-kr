@@ -1,0 +1,147 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+
+<div layout:fragment="content" class="col-10 mx-auto" style="margin-top: 100px; margin-bottom: 130px;">
+    <h3>공지사항</h3>
+    <hr class="mb-4">
+
+    <!-- 공지사항 테이블 -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th th:style="'width: 10%;'">#</th>
+            <th th:style="'width: 55%;'">제목</th>
+            <th th:style="'width: 20%;'">날짜</th>
+            <th th:style="'width: 10%;'">조회수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 중요한 공지사항 (검색어 없을 때만 표시) -->
+        <tr th:if="${keyword == null || keyword.isEmpty()}" th:each="announcement : ${importantAnnouncements}">
+            <td>중요</td>
+            <td>
+                <a th:href="@{/announce/read(id=${announcement.id}, page=${currentPage})}" th:text="${announcement.title}" class="text-decoration-none"></a>
+                <span class="badge bg-danger ml-2">중요</span>
+            </td>
+            <td>[[${#temporals.format(announcement.regDate, 'yyyy-MM-dd')}]]
+                <span th:if="${announcement.modDate != null}">(수정됨)</span>
+            </td>
+            <td th:text="${announcement.views}"></td>
+        </tr>
+
+        <!-- 일반 공지사항 또는 검색 결과 -->
+        <tr th:each="announcement, iterStat : ${announcements}">
+            <td th:text="${startIndex + iterStat.index}"></td>
+            <td>
+                <a th:href="@{/announce/read(id=${announcement.id}, page=${currentPage})}" th:text="${announcement.title}" class="text-decoration-none"></a>
+            </td>
+            <td>[[${#temporals.format(announcement.regDate, 'yyyy-MM-dd')}]]
+                <span th:if="${announcement.modDate != null}">(수정됨)</span>
+            </td>
+            <td th:text="${announcement.views}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--<table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Views</th>
+        </tr>
+        </thead>
+        <tbody>
+        &lt;!&ndash; 중요한 공지사항 &ndash;&gt;
+        <tr th:each="announcement : ${importantAnnouncements}">
+            <td>중요</td>
+            <td>
+                &lt;!&ndash; 제목과 "중요" 배지 &ndash;&gt;
+                <a th:href="@{/announce/read(id=${announcement.id}, page=${currentPage})}" th:text="${announcement.title}" class="text-decoration-none"></a>
+                <span class="badge bg-danger ml-2">중요</span>
+            </td>
+            <td th:text="${announcement.views}"></td>
+        </tr>
+
+        &lt;!&ndash; 일반 공지사항 &ndash;&gt;
+        <tr th:each="announcement, iterStat : ${announcements}">
+            <td th:text="${startIndex + iterStat.index}"></td>
+            <td>
+                <a th:href="@{/announce/read(id=${announcement.id}, page=${currentPage})}" th:text="${announcement.title}" class="text-decoration-none"></a>
+            </td>
+            <td th:text="${announcement.views}"></td>
+        </tr>
+        </tbody>
+    </table>-->
+
+    <!-- 페이지네이션 & 검색창 -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <!-- 검색창과 글쓰기 버튼 -->
+        <div class="d-flex align-items-center">
+            <!-- 검색창 -->
+            <form th:action="@{/announce/list}" method="get" class="d-flex align-items-center">
+                <div class="input-group">
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Search(제목)" class="form-control">
+                    <!-- 돋보기 아이콘 -->
+                    <button type="submit" class="btn btn-outline-secondary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <!-- 초기화 버튼 -->
+                    <a th:href="@{/announce/list}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </form>
+
+            <!-- 글쓰기 버튼 -->
+            <a th:href="@{/announce/new}" class="btn btn-outline-primary ms-2">글 쓰기</a></div>
+
+        <!-- 페이지네이션 -->
+        <nav>
+            <ul class="pagination mb-0">
+                <!-- 이전 페이지 -->
+                <li class="page-item" th:classappend="${currentGroupStart == 0} ? 'disabled'">
+                    <a class="page-link" th:if="${currentPage > 0}"
+                       th:href="@{/announce/list(page=${currentGroupStart - 1}, keyword=${keyword})}">이전</a>
+                    <span class="page-link" th:if="${currentPage == 0}">이전</span>
+                </li>
+
+                <!-- 페이지 번호 -->
+                <li class="page-item" th:each="pageNum : ${#numbers.sequence(currentGroupStart, currentGroupEnd)}"
+                    th:classappend="${pageNum == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/announce/list(page=${pageNum}, keyword=${keyword})}" th:text="${pageNum + 1}"></a>
+                </li>
+
+                <!-- 다음 페이지 -->
+                <li class="page-item" th:classappend="${currentGroupEnd + 1 >= totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/announce/list(page=${currentGroupEnd + 1}, keyword=${keyword})}">다음</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+    <!-- 페이지네이션 -->
+    <!--<nav>
+        <ul class="pagination justify-content-center">
+            &lt;!&ndash; 이전 그룹 버튼 &ndash;&gt;
+            <li class="page-item" th:classappend="${currentGroupStart == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/announce/list(page=${currentGroupStart - 1})}">이전</a>
+            </li>
+
+            &lt;!&ndash; 페이지 번호 &ndash;&gt;
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(currentGroupStart, currentGroupEnd)}"
+                th:classappend="${pageNum == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/announce/list(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+            </li>
+
+            &lt;!&ndash; 다음 그룹 버튼 &ndash;&gt;
+            <li class="page-item" th:classappend="${currentGroupEnd + 1 >= totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/announce/list(page=${currentGroupEnd + 1})}">다음</a>
+            </li>
+        </ul>
+    </nav>-->
+
+</html>

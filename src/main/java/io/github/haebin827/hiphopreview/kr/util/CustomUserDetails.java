@@ -9,12 +9,14 @@ import java.util.Collection;
 @Getter
 public class CustomUserDetails extends User {
 
-    private final String name;       // 추가 정보: 이름
-    private final String nickname;   // 추가 정보: 닉네임
+    private final Integer id;
+    private final String name;
+    private final String nickname;
 
-    public CustomUserDetails(String username, String password, String name, String nickname,
+    public CustomUserDetails(Integer id, String username, String password, String name, String nickname,
                              Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
+        this.id = id;
         this.name = name;
         this.nickname = nickname;
     }

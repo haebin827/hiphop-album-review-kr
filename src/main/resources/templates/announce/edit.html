@@ -1,0 +1,61 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/base.html}">
+
+<div layout:fragment="content" class="col-10 mx-auto" style="margin-top: 100px; margin-bottom: 100px;">
+    <h3>공지사항 수정</h3>
+    <hr class="mb-4">
+    <form th:action="@{/announce/edit}" method="post" novalidate class="needs-validation" id="announcementForm">
+        <!-- ID (숨김 필드로 전달) -->
+        <input type="hidden" name="id" th:value="${announcement.id}">
+
+        <!-- 제목 -->
+        <div class="col-9 mx-auto mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력하세요." th:value="${announcement.title}" required>
+            <div class="invalid-feedback">제목은 필수 입력 항목입니다.</div>
+        </div>
+
+        <!-- 내용 -->
+        <div class="col-9 mx-auto mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" id="content" name="content" rows="10" placeholder="내용을 입력하세요." th:text="${announcement.content}" required></textarea>
+            <div class="invalid-feedback">내용은 필수 입력 항목입니다.</div>
+        </div>
+
+        <!-- 중요 체크박스 -->
+        <div class="col-9 mx-auto mb-3 form-check">
+            <input class="form-check-input" type="checkbox" id="isImp" name="isImp" value="true" th:checked="${announcement.isImp}">
+            <label class="form-check-label" for="isImp">중요</label>
+            <!-- 숨겨진 필드 추가 -->
+            <input type="hidden" id="hiddenIsImp" name="_isImp" value="false">
+        </div>
+
+        <!-- 버튼 그룹 -->
+        <div class="col-9 mx-auto my-4">
+            <div class="d-flex justify-content-end">
+                <div class="btn-group" role="group">
+                    <button type="submit" class="btn btn-outline-dark">저장</button>
+                    <a th:href="@{/announce/read(id=${announcement.id})}" class="btn btn-secondary">취소</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('announcementForm');
+
+        form.addEventListener('submit', function (event) {
+            // 폼의 유효성 검사
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+</html>

@@ -20,13 +20,13 @@ public class ArtistRequestDTO {
 
     private Integer id;
 
-    @NotNull
-    private Integer userId;
+    //@NotNull
+    //private Integer userId;
 
     @NotEmpty(message = "아티스트 명은 필수 입력 항목입니다.")
     private String name;
 
-    @NotEmpty(message = "아티스트 성별은 필수 입력 항목입니다.")
+    //@NotEmpty(message = "아티스트 성별은 필수 입력 항목입니다.")
     private String gender;
 
     @NotEmpty(message = "아티스트 유형은 필수 입력 항목입니다.")

@@ -3,13 +3,239 @@
       xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layout/base.html}">
 
-<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 100px; margin-bottom: 200px;">
+<div layout:fragment="content" class="col-9 mx-auto" style="margin-top: 100px; margin-bottom: 130px;">
     <div>
-        <h3 class="mb-2" style="display: inline-block; color: #333;">아티스트 신청하기</h3>
+        <h3 class="mb-2 text-center" style="color: #333;">아티스트 신청하기</h3>
         <hr class="mb-6" style="margin-bottom: 40px; margin-top: 40px; border: 1px solid #555;">
+
+        <!-- 안내 메시지 -->
+        <p class="text-center mb-3" style="color: #666; font-size: 14px;">
+            아직 등록되지 않은 아티스트의 앨범 신청은 아티스트 등록 이후에 가능합니다.<br>제출해주신 폼은 관리자 확인 후 승인이 결정됩니다.
+        </p>
+        <p class="text-center mb-5" style="color: #ff4d4d; font-size: 14px;">
+            모든 항목을 최대한 정확하고 자세하게 적어주시면 빠른 등록에 도움이 됩니다!🙇
+        </p>
+
+        <form id="artistForm" th:action="@{/support/artist-request}" method="post" enctype="multipart/form-data" class="col-6 mx-auto needs-validation" novalidate>
+            <!-- 아티스트 이름 -->
+            <div class="row mb-4 align-items-center">
+                <label for="artistName" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    아티스트 이름 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9">
+                    <input id="artistName" name="name" type="text" class="form-control" placeholder="아티스트 명을 입력하세요." required />
+                    <div class="invalid-feedback">아티스트 이름을 입력하세요.</div>
+                </div>
+            </div>
+
+            <!-- 타입 -->
+            <div class="row mb-4 align-items-center">
+                <label class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    타입 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="typeIndividual" value="person" checked onclick="toggleGender(true)" />
+                        <label class="form-check-label" for="typeIndividual">개인</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="typeGroup" value="group" onclick="toggleGender(false)" />
+                        <label class="form-check-label" for="typeGroup">그룹</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 성별 -->
+            <div class="row mb-4 align-items-center" id="genderSection">
+                <label class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    성별 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" />
+                        <label class="form-check-label" for="genderMale">남성</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female" />
+                        <label class="form-check-label" for="genderFemale">여성</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="gender" id="genderUnknown" value="" />
+                        <label class="form-check-label" for="genderUnknown">알 수 없음</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 국가 -->
+            <div class="row mb-4 align-items-center">
+                <label for="country" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    국가 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9 d-flex align-items-center">
+                    <select id="country" name="country" class="form-select" style="width: 40%;" required>
+                        <option value="">-- 선택하세요 --</option>
+                        <option value="KR">대한민국</option>
+                        <option value="US">미국</option>
+                        <option value="GB">영국</option>
+                        <option value="CA">캐나다</option>
+                        <option value="AU">호주</option>
+                        <option value="DE">독일</option>
+                        <option value="FR">프랑스</option>
+                        <option value="JP">일본</option>
+                        <option value="CN">중국</option>
+                    </select>
+                    <div class="invalid-feedback">국가를 선택하세요.</div>
+                </div>
+            </div>
+
+            <!-- 생년월일 -->
+            <div class="row mb-4 align-items-center">
+                <label id="birthLabel" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    생년월일 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9">
+                    <div class="d-flex align-items-center">
+                        <input type="number" id="birthYear" class="form-control" placeholder="년(4자리)" style="width: 30%;" required />
+                        <span class="mx-2">/</span>
+                        <select id="birthMonth" class="form-select" style="width: 25%;" required>
+                            <option value="">월</option>
+                            <th:block th:each="month : ${#numbers.sequence(1,12)}">
+                                <option th:value="${month}" th:text="${month}"></option>
+                            </th:block>
+                        </select>
+                        <span class="mx-2">/</span>
+                        <select id="birthDay" class="form-select" style="width: 25%;" required>
+                            <option value="">일</option>
+                            <th:block th:each="day : ${#numbers.sequence(1,31)}">
+                                <option th:value="${day}" th:text="${day}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="invalid-feedback">생년월일을 올바르게 입력하세요.</div>
+                </div>
+            </div>
+
+            <!-- 태그 -->
+            <div class="row mb-4 align-items-center">
+                <label for="tags" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    태그:
+                </label>
+                <div class="col-md-9 d-flex align-items-center">
+                    <input id="tags" name="tags" type="text" class="form-control" placeholder="태그를 입력하세요." />
+                    <button type="button" class="btn btn-dark btn-sm ms-2" tabindex="0" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover"
+                            data-bs-content="태그는 아티스트를 나타내는 키워드입니다.<br>:를 기준으로 나눠주세요.<br>(ex. 붐뱁:컨셔스 랩:올해의 아티스트 수상)">
+                        ?
+                    </button>
+                </div>
+            </div>
+
+            <!-- 아티스트 사진 -->
+            <div class="row mb-4 align-items-center">
+                <label for="artistPhoto" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    아티스트 사진:
+                </label>
+                <div class="col-md-9 d-flex align-items-center">
+                    <input id="artistPhoto" name="image" type="file" class="form-control" accept="image/*" onchange="limitFileUpload(this)" />
+                    <button type="button" class="btn btn-dark btn-sm ms-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover"
+                            data-bs-content="최대한 잘 나온 사진으로 올려주세요!">
+                        ?
+                    </button>
+                </div>
+            </div>
+
+            <!-- 기타 하고싶은 말 -->
+            <div class="row mb-4 align-items-center">
+                <label for="note" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    기타 하고싶은 말:
+                </label>
+                <div class="col-md-9">
+                    <textarea id="note" name="note" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- 제출 버튼 -->
+            <div class="row">
+                <div class="col-md-9 offset-md-3 text-end">
+                    <button type="button" class="btn btn-dark rounded-pill" onclick="validateAndSubmitForm()">
+                        제출
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
+
+    function limitFileUpload(input) {
+        if (input.files.length > 1) {
+            alert("한 번에 1장의 사진만 업로드할 수 있습니다.");
+            input.value = ""; // 선택 초기화
+        }
+    }
+
+    function toggleGender(enable) {
+        const genderRadios = document.querySelectorAll('[name="gender"]');
+        genderRadios.forEach(radio => {
+            radio.disabled = !enable; // 성별 필드 활성화/비활성화
+            radio.required = enable; // 성별 필드의 required 설정
+            if (!enable) {
+                radio.checked = false; // 체크 해제
+            }
+        });
+
+        // 생년월일/활동 시작일 레이블 업데이트
+        const birthLabel = document.getElementById('birthLabel');
+        birthLabel.textContent = enable
+            ? '생년월일 '
+            : '활동 시작일 ';
+        birthLabel.innerHTML += '<span style="color: red;">*</span>:';
+    }
+
+    function validateAndSubmitForm() {
+        const form = document.getElementById('artistForm');
+        const typeIndividual = document.getElementById('typeIndividual').checked;
+
+        // 성별 필드에 대해 조건에 따라 required 설정
+        toggleGender(typeIndividual);
+
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+
+        const genderUnknown = document.getElementById('genderUnknown');
+        if (genderUnknown.checked) {
+            genderUnknown.name = ""; // 전송되지 않도록 name 속성 제거
+        } else {
+            genderUnknown.name = "gender"; // 다시 설정하여 전송 가능하도록 함
+        }
+
+        const birthYear = document.getElementById('birthYear').value;
+        const birthMonth = document.getElementById('birthMonth').value;
+        const birthDay = document.getElementById('birthDay').value;
+        const bornedIn = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+
+        const confirmation = confirm("모든 내용이 정확합니까?");
+        if (confirmation) {
+            const bornedInInput = document.createElement('input');
+            bornedInInput.type = 'hidden';
+            bornedInInput.name = 'bornedIn';
+            bornedInInput.value = bornedIn;
+            form.appendChild(bornedInInput);
+
+            form.submit();
+        }
+    }
+
+    // Bootstrap Popovers 초기화
+    document.addEventListener('DOMContentLoaded', function () {
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        popoverTriggerList.forEach(function (popoverTriggerEl) {
+            new bootstrap.Popover(popoverTriggerEl, {
+                trigger: 'hover'
+            });
+        });
+    });
 </script>
 </html>
