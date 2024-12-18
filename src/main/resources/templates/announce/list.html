@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base.html}">
 
-<div layout:fragment="content" class="col-10 mx-auto" style="margin-top: 100px; margin-bottom: 130px;">
+<div layout:fragment="content" class="col-10 mx-auto" style="margin-top: 100px; margin-bottom: 70px;">
     <h3>공지사항</h3>
     <hr class="mb-4">
 
@@ -109,9 +109,12 @@
                 </li>
 
                 <!-- 페이지 번호 -->
-                <li class="page-item" th:each="pageNum : ${#numbers.sequence(currentGroupStart, currentGroupEnd)}"
+                <li class="page-item"
+                    th:each="pageNum, iterStat : ${totalPages > 0 ? #numbers.sequence(currentGroupStart, currentGroupEnd) : #numbers.sequence(currentPage, currentPage)}"
                     th:classappend="${pageNum == currentPage} ? 'active'">
-                    <a class="page-link" th:href="@{/announce/list(page=${pageNum}, keyword=${keyword})}" th:text="${pageNum + 1}"></a>
+                    <a class="page-link"
+                       th:href="@{/announce/list(page=${pageNum}, keyword=${keyword})}"
+                       th:text="${pageNum + 1}"></a>
                 </li>
 
                 <!-- 다음 페이지 -->

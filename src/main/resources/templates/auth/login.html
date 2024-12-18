@@ -17,10 +17,27 @@
         .btn-yellow:hover {
             background-color: #FFC700; /* hover 시 조금 더 어두운 노랑 */
         }
+
+        /* 회원가입 및 아이디/비밀번호 찾기 정렬 */
+        .auth-links {
+            display: flex;
+            justify-content: space-between; /* 왼쪽과 오른쪽 정렬 */
+            width: 100%; /* 로그인 버튼과 동일한 너비 */
+        }
+
+        .auth-links a {
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-top: 0.8px;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
-<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 120px; margin-bottom: 180px;">
+<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 120px; margin-bottom: 200px;">
 
     <form th:action="@{/auth/login}" method="post" style="width:30%;margin:80px auto;">
 
@@ -34,21 +51,16 @@
             <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호"/>
         </div>
 
-        <!-- 2 column grid layout for inline styling -->
-        <div class="row mb-4">
-            <div class="col">
-                <!-- Simple link -->
-                <a>Forgot password?</a>
-            </div>
-        </div>
-
         <!-- Submit button -->
         <button type="submit" data-mdb-button-init data-mdb-ripple-init
                 class="btn btn-yellow btn-block mb-4" style="width: 100%">로그인</button>
 
-        <!-- Register buttons -->
-        <div class="text-center">
-            <p>멤버가 아니셈요? <a th:href="@{/auth/register}">회원가입하기</a></p>
+        <!-- Register and Find ID/Password -->
+        <div class="auth-links">
+            <!-- 왼쪽 정렬: 회원가입 -->
+            <a th:href="@{/auth/register}">회원가입</a>
+            <!-- 오른쪽 정렬: 아이디/비밀번호 찾기 -->
+            <a th:href="@{/auth/find}">아이디/비밀번호 찾기</a>
         </div>
     </form>
 

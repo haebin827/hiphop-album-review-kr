@@ -80,6 +80,9 @@ public class AnnouncementController {
         int currentGroupEnd = Math.min(currentGroupStart + pageSize - 1, announcements.getTotalPages() - 1);
         int startIndex = page * size + 1;
 
+        log.info("CURRENT GROUP START: " + currentGroupStart);
+        log.info("CURRENT GROUP END: " + currentGroupEnd);
+        log.info("TOTAL PAGES: " + announcements.getTotalPages());
         model.addAttribute("announcements", announcements.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", announcements.getTotalPages());

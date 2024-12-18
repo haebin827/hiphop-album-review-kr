@@ -1,6 +1,7 @@
 package io.github.haebin827.hiphopreview.kr.config;
 
 import io.github.haebin827.hiphopreview.kr.util.AuthenticationSuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 import java.util.Collections;
 
@@ -32,13 +36,40 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // 사용자(user) & 관리자(admin) 권한 필요
-                        //.requestMatchers("/support/album-request", "/support/artist-request", "/support/feedback", "/profile/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/support/album-request", "/support/artist-request", "/support/feedback", "/profile/**").hasAnyRole("ADMIN", "USER")
+
+                        // 인증된 사용자만 접근 가능
+                        .requestMatchers("/auth/findInfo").authenticated()
 
                         // 로그인하지 않은 사용자도 접근 가능한 URL
                         .requestMatchers("/auth/login", "/").permitAll()
 
                         // 그 외 모든 요청
                         .anyRequest().permitAll()
+                )
+                .exceptionHandling(exceptions -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                (request, response, authException) -> {
+                                    // /auth/findInfo에 대한 403 Forbidden 응답
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    response.getWriter().write("Access Denied: You are not allowed to access this resource.");
+                                },
+                                new OrRequestMatcher(
+                                        new AntPathRequestMatcher("/auth/findInfo"),
+                                        new AntPathRequestMatcher("/auth/emailConfirm"),
+                                        new AntPathRequestMatcher("/auth/registerConfirmed")
+                                )
+                        )
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/auth/login"), // 로그인 페이지로 리다이렉트
+                                new OrRequestMatcher(
+                                        new AntPathRequestMatcher("/admin/**"),
+                                        new AntPathRequestMatcher("/support/album-request"),
+                                        new AntPathRequestMatcher("/support/artist-request"),
+                                        new AntPathRequestMatcher("/support/feedback"),
+                                        new AntPathRequestMatcher("/profile/**")
+                                )
+                        )
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")

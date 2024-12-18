@@ -32,6 +32,11 @@ public class BasicController {
             log.info("CHECK: No authenticated user found.");
         }
 
+        session.removeAttribute("tempUser");
+        session.removeAttribute("toggle");
+        session.removeAttribute("requestSource");
+        session.removeAttribute("userEmail");
+
         return "home";
     }
 }
