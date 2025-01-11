@@ -110,17 +110,17 @@ public class Album {
     @Column
     private String year;
 
-    @Column
-    private float rating;
+    //@Column
+    //private float rating;
 
     //@Column
     //private int tracks;
 
-    @Column
-    private String link;
+    //@Column
+    //private String link;
 
-    @Column
-    private String image;
+    //@Column
+    //private String image;
 
     @Column
     private String s3url;
@@ -161,6 +161,12 @@ public class Album {
                 - Spring Data JPA의 save() 메서드를 호출하면 엔티티가 영속화되는 시점에 자동으로 @PrePersist 메서드가 실행됨.
     */
 
+    @Column
+    private String youtubeUrl;
+
+    @Column
+    private String soundcloudUrl;
+
     @Column(unique = true)
     private String uuid;
 
@@ -171,7 +177,6 @@ public class Album {
     @PrePersist
     protected void onCreate() {
         this.isActive = true;
-        this.rating = 0f;
         this.regDate = LocalDateTime.now();
     }
 }

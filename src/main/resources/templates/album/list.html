@@ -1,0 +1,97 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+
+<div layout:fragment="content" class="col-11 mx-auto" style="margin-top: 50px; margin-bottom: 30px;">
+    <!-- 검색창과 제목 레이블 정렬 -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="text-start mb-0">앨범</h3>
+        <form th:action="@{/album/list}" method="get" class="d-flex align-items-center" style="height: 2.5rem;">
+            <div class="input-group" style="height: 100%;">
+                <!-- Select 요소 -->
+                <select name="searchType" class="form-select form-select-sm" style="width: 120px; margin-right: 5px;">
+                    <option value="" th:selected="${searchType == ''}">--- 선택 ---</option>
+                    <option value="artist" th:selected="${searchType == 'artist'}">아티스트명</option>
+                    <option value="album" th:selected="${searchType == 'album'}">앨범명</option>
+                </select>
+
+                <!-- 검색창 -->
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Search"
+                       class="form-control form-control-sm" style="width: 150px;">
+
+                <!-- 돋보기 아이콘 -->
+                <button type="submit" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center" style="height: 2.5rem;">
+                    <i class="bi bi-search" style="font-size: 1rem;"></i>
+                </button>
+
+                <!-- 초기화 버튼 -->
+                <a th:href="@{/album/list}" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center" style="height: 2.5rem;">
+                    <i class="bi bi-x-lg" style="font-size: 1rem;"></i>
+                </a>
+            </div>
+        </form>
+
+    </div>
+
+    <hr class="mb-5">
+
+    <!-- 앨범 목록 출력 -->
+    <div class="row gx-2 gy-3 mb-5 justify-content-start">
+        <!-- 앨범 카드 -->
+        <div class="col" style="flex: 0 0 calc(100% / 7); max-width: calc(100% / 7);" th:each="album : ${albums}">
+            <div class="card text-center" style="font-size: 0.9rem;">
+                <!-- UUID를 사용해 S3 URL 생성 -->
+                <a th:href="@{/album/info(id=${album.id}, sort='popular')}">
+                    <img class="card-img-top"
+                         th:src="${album.s3url != null and !album.s3url.isEmpty() ? album.s3url : album_default_image}"
+                         alt="Album Cover"
+                         style="height: 160px; width: auto; object-fit: cover; border-radius: 8px; box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);"/>
+                </a>
+                <div class="card-body p-2">
+                    <!-- Artist Name -->
+                    <p class="text-muted mb-1" style="font-size: 0.8rem; line-height: 1.2;" th:text="${album.artistName}"></p>
+                    <!-- Album Title -->
+                    <h6 class="card-title mb-1" style="font-size: 0.95rem; line-height: 1.2;">
+                        <a th:href="@{/album/info(id=${album.id})}" th:text="${album.title}" style="text-decoration: none; color: inherit;"></a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이지네이션과 글쓰기 버튼 -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <!-- 페이지네이션 중앙 정렬 -->
+        <nav class="mx-auto">
+            <ul class="pagination mb-0">
+                <!-- 이전 페이지 -->
+                <li class="page-item" th:classappend="${currentGroupStart == 0} ? 'disabled'">
+                    <a class="page-link" th:if="${currentPage > 0}"
+                       th:href="@{/album/list(page=${currentGroupStart - 1}, keyword=${keyword})}">이전</a>
+                    <span class="page-link" th:if="${currentPage == 0}">이전</span>
+                </li>
+
+                <!-- 페이지 번호 -->
+                <li class="page-item"
+                    th:each="pageNum, iterStat : ${totalPages > 0 ? #numbers.sequence(currentGroupStart, currentGroupEnd) : #numbers.sequence(currentPage, currentPage)}"
+                    th:classappend="${pageNum == currentPage} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/album/list(page=${pageNum}, keyword=${keyword})}"
+                       th:text="${pageNum + 1}"></a>
+                </li>
+
+                <!-- 다음 페이지 -->
+                <li class="page-item" th:classappend="${currentGroupEnd + 1 >= totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/album/list(page=${currentGroupEnd + 1}, keyword=${keyword})}">다음</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div>
+        <!-- 글쓰기 버튼 오른쪽 정렬 -->
+        <a th:href="@{/artist/new}" class="btn btn-outline-primary me-2">아티스트 등록하기</a>
+        <a th:href="@{/album/new}" class="btn btn-outline-primary">앨범 등록하기</a>
+    </div>
+</div>
+</html>

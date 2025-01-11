@@ -1,0 +1,217 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/base.html}">
+
+<head>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .rating-wrap {
+            max-width: 480px;
+            margin: auto;
+            padding: 15px;
+            text-align: center;
+            /* box-shadow 제거 */
+        }
+
+        .center {
+            width: 162px;
+            margin: auto;
+        }
+
+        /* 별점 값을 표시하는 텍스트 박스 스타일 제거 */
+        #rating-value {
+            width: 110px;
+            margin: 40px auto 0;
+            padding: 10px 5px;
+            text-align: center;
+            box-shadow: none; /* box-shadow 제거 */
+            border: none; /* 테두리 제거 */
+            background-color: transparent; /* 배경색 투명 */
+            font-size: 1rem; /* 폰트 크기 설정 */
+            color: #000904; /* 텍스트 색상 */
+        }
+
+
+        /* 별점 스타일 */
+        .rating {
+            border: none; /* 테두리 제거 */
+            float: left;
+        }
+
+        .rating > input {
+            display: none; /* 라디오 버튼 숨김 */
+        }
+
+        .rating > label:before {
+            content: '\f005'; /* FontAwesome 별 모양 */
+            font-family: FontAwesome;
+            margin: 5px;
+            font-size: 1.2rem; /* 별 크기 축소 (기존 1.5rem에서 감소) */
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .rating > .half:before {
+            content: '\f089'; /* FontAwesome 반쪽 별 */
+            position: absolute;
+            font-size: 1.2rem; /* 반쪽 별 크기 축소 */
+            cursor: pointer;
+        }
+
+        .rating > label {
+            color: #ddd;
+            float: right;
+            cursor: pointer;
+        }
+
+        /* 별 선택 및 호버 스타일 */
+        .rating > input:checked ~ label,
+        .rating:not(:checked) > label:hover,
+        .rating:not(:checked) > label:hover ~ label {
+            color: #f4c921; /* 선택된 별 색상 */
+        }
+
+        .rating > input:checked + label:hover,
+        .rating > input:checked ~ label:hover,
+        .rating > label:hover ~ input:checked ~ label,
+        .rating > input:checked ~ label:hover ~ label {
+            color: #f4c921; /* 선택된 별 호버 색상 */
+        }
+    </style>
+
+</head>
+
+<body>
+<div layout:fragment="content" class="col-8 mx-auto" style="margin-top: 90px; margin-bottom: 80px;">
+    <!-- 리뷰쓰기 제목 및 작성자 -->
+    <div class="d-flex align-items-center mb-3" style="margin-left: 25px;">
+        <img th:src="${album.s3url}" alt="Album Cover"
+             style="height: 70px; width: auto; margin-right: 15px; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);">
+        <div>
+            <h4>
+                <span>  리뷰 쓰기: </span>
+                <span style="font-weight: bold;" th:text="'[' + ${album.title} + ']'"></span>
+            </h4>
+            <p th:if="${#authentication != null and #authentication.principal != null}"
+               th:text="'작성자: ' + ${#authentication.principal.nickname}"
+               style="font-size: 15px; color: gray; margin: 15px 2px 0;"></p>
+        </div>
+    </div>
+
+    <hr class="mb-4">
+
+    <!-- 리뷰 작성 폼 -->
+    <form th:action="@{/album/review/new}" method="post" novalidate class="needs-validation" id="reviewForm">
+        <!-- Hidden Field for Album ID -->
+        <input type="hidden" name="albumId" th:value="${album.id}"/>
+
+        <!-- Star Rating -->
+        <div class="rating-wrap">
+            <h5>내 평점</h5>
+            <div class="center">
+                <fieldset class="rating">
+                    <input type="radio" id="star5" name="rating" value="5"/><label for="star5" class="full" title="Awesome"></label>
+                    <input type="radio" id="star4.5" name="rating" value="4.5"/><label for="star4.5" class="half"></label>
+                    <input type="radio" id="star4" name="rating" value="4"/><label for="star4" class="full"></label>
+                    <input type="radio" id="star3.5" name="rating" value="3.5"/><label for="star3.5" class="half"></label>
+                    <input type="radio" id="star3" name="rating" value="3"/><label for="star3" class="full"></label>
+                    <input type="radio" id="star2.5" name="rating" value="2.5"/><label for="star2.5" class="half"></label>
+                    <input type="radio" id="star2" name="rating" value="2"/><label for="star2" class="full"></label>
+                    <input type="radio" id="star1.5" name="rating" value="1.5"/><label for="star1.5" class="half"></label>
+                    <input type="radio" id="star1" name="rating" value="1"/><label for="star1" class="full"></label>
+                    <input type="radio" id="star0.5" name="rating" value="0.5"/><label for="star0.5" class="half"></label>
+                </fieldset>
+            </div>
+            <h4 id="rating-value"></h4>
+        </div>
+
+        <!-- Sub Ratings -->
+        <div class="sub-rating-container d-flex justify-content-around mt-4">
+            <!-- 음악적 완성도 -->
+            <div class="sub-rating text-center">
+                <h6>음악적 완성도</h6>
+                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingCompletion" id="ratingCompletion" class="text-center" style="width: 50px; margin: 0 auto;">
+                <span id="ratingCompletionValue"> / 5 ⭐</span>
+            </div>
+            <!-- 트랙 간 유기성 -->
+            <div class="sub-rating text-center">
+                <h6>트랙 간 유기성</h6>
+                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingCohesion" id="ratingCohesion" class="text-center" style="width: 50px; margin: 0 auto;">
+                <span id="ratingCohesionValue"> / 5 ⭐</span>
+            </div>
+            <!-- 재청취 욕구 -->
+            <div class="sub-rating text-center">
+                <h6>재청취 욕구</h6>
+                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingReplayability" id="ratingReplayability" class="text-center" style="width: 50px; margin: 0 auto;">
+                <span id="ratingReplayabilityValue"> / 5 ⭐</span>
+            </div>
+        </div>
+
+        <!-- 제목 -->
+        <div class="col-9 mx-auto mt-5 mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력하세요." required>
+            <div class="invalid-feedback">제목은 필수 입력 항목입니다.</div>
+        </div>
+
+        <!-- 내용 -->
+        <div class="col-9 mx-auto mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" id="content" name="content" rows="10" placeholder="내용을 입력하세요." required></textarea>
+            <div class="invalid-feedback">내용은 필수 입력 항목입니다.</div>
+        </div>
+
+        <!-- 버튼 그룹 -->
+        <div class="col-9 mx-auto my-4">
+            <div class="d-flex justify-content-end">
+                <div class="btn-group" role="group">
+                    <button type="submit" class="btn btn-outline-dark">등록</button>
+                    <button type="reset" class="btn btn-outline-dark">초기화</button>
+                    <a th:href="@{/album/info(id=${album.id})}" class="btn btn-secondary">뒤로</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('reviewForm');
+        const stars = document.querySelectorAll('input[name="rating"]');
+        const ratingValue = document.querySelector('#rating-value');
+
+        // 별점 선택 시 값 표시
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                ratingValue.innerHTML = this.value + " / 5";
+            });
+        });
+
+        // 폼 제출 시 별점 필드 확인
+        form.addEventListener('submit', function (event) {
+            // 별점이 선택되었는지 확인
+            const isRatingSelected = Array.from(stars).some(star => star.checked);
+
+            if (!isRatingSelected) {
+                event.preventDefault(); // 폼 제출 중단
+                alert('별점을 선택해주세요.'); // 경고 메시지
+                return;
+            }
+
+            // 기본 HTML5 폼 검증
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add('was-validated');
+        });
+    });
+
+</script>
+</body>
+</html>

@@ -53,6 +53,7 @@ public class User {
     @Column(updatable = false)
     private LocalDateTime regDate;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
 

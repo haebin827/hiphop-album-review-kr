@@ -22,6 +22,7 @@ public class Review {
     private Integer id;
 
     @Setter
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -40,6 +41,15 @@ public class Review {
     @Column(nullable = false)
     private float rating;
 
+    @Column
+    private float ratingCompletion;
+
+    @Column
+    private float ratingCohesion;
+
+    @Column
+    private float ratingReplayability;
+
     @Column(nullable = false)
     private int likes;
 
@@ -54,12 +64,12 @@ public class Review {
     @Column
     private LocalDateTime modDate;
 
-    @Column(nullable = false)
-    private boolean isDeleted;
+    public void setLikes(int newLikes) {
+        likes=newLikes ;
+    }
 
     @PrePersist
     protected void onCreate() {
-        this.isDeleted = false;
         this.likes = 0;
         this.dislikes = 0;
         this.regDate = LocalDateTime.now();
