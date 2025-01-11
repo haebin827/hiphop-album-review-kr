@@ -1,0 +1,334 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+
+<div layout:fragment="content" class="col-11 mx-auto" style="margin-top: 70px; margin-bottom: 80px;">
+    <div class="card">
+        <div class="d-flex justify-content-between align-items-start" style="gap: 20px;">
+
+            <!-- 앨범 이미지 -->
+            <div class="album-photo" style="width: 21%; padding: 0;">
+                <img th:src="${album.s3url}" class="img-fluid" alt="Album Cover"
+                     style="object-fit: cover; width: 100%; height: auto; border-radius: 8px; box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);">
+            </div>
+
+            <!-- 앨범 정보 -->
+            <div class="album-info" style="width: 50%; position: relative; padding: 0; margin-top: 13px;">
+                <div class="card-body" style="padding-left: 5px; text-align: left;">
+                    <!-- 앨범 제목 -->
+                    <h3 class="card-title mb-3" th:text="${album.title}"
+                        style="font-size: 2.05rem; font-weight: bold; margin: 0;"></h3>
+                    <!-- 가수 이름 -->
+                    <p class="card-text mb-2">
+                        <a th:href="@{/artist/info=(id=${album.artistId})}"
+                           style="font-size: 1.1rem; color: inherit; text-decoration: none;"
+                           th:text="${album.artistName}"></a>
+                    </p>
+                    <!-- 발매일 -->
+                    <p class="card-text" th:text="${album.year}"
+                       style="font-size: 1rem; color: gray; margin: 0 0 10px 0;"></p>
+                    <!-- 유튜브 및 사운드클라우드 링크 -->
+                    <p class="card-text" style="margin: 0; white-space: nowrap;">
+                        <a th:if="${album.youtubeUrl != null}" th:href="${album.youtubeUrl}" target="_blank" style="color: red; font-size: 1.5rem; margin-right: 10px;"><i class="fab fa-youtube"></i></a>
+                        <a th:if="${album.soundcloudUrl != null}" th:href="${album.soundcloudUrl}" target="_blank" style="color: orange; font-size: 1.5rem;"><i class="fab fa-soundcloud"></i></a>
+                    </p>
+                </div>
+
+                <!-- 평균 별점과 리뷰 수 -->
+                <div style="position: absolute; top: 225px; left: 10px; font-size: 2rem; font-weight: bold; color: black;">
+                    <!-- 평균 별점 출력 -->
+                    <span th:text="${ratingsAndTotalReviews['avgRating']}"></span>
+                    <!-- 별 아이콘 조건부 출력 -->
+                    <i th:if="${ratingsAndTotalReviews['avgRating'] != '0.0'}" class="fas fa-star" style="color: gold;"></i>
+                    <i th:if="${ratingsAndTotalReviews['avgRating'] == '0.0'}" class="far fa-star" style="color: gray;"></i>
+                    <span style="font-weight: lighter;"> | </span>
+                    <span th:text="${ratingsAndTotalReviews['totalReviews']}"></span>
+                    <span style="font-size: 1rem; font-weight: normal; color: #4d5154;">개의 리뷰</span>
+                </div>
+
+
+            </div>
+
+
+
+            <!-- 상 정보 및 리뷰 정보 -->
+            <div class="award-info text-right" style="width: 25%; padding: 0;">
+                <!-- 상 정보 -->
+                <div class="text-right" style="min-height: 80px;">
+                    <div th:if="${awards != null}" th:each="entry : ${awards}">
+                        <p style="font-size: 0.85rem; font-weight: bold; text-align: right; margin: 10px 0;">
+                            🏆 [<span th:text="${entry.key}"></span>]에서 <span style="color: red;" th:text="${entry.value} + '위'"></span>를 차지했어요.
+                        </p>
+                    </div>
+                </div>
+                <!-- 리뷰 쓰기 버튼 -->
+                <a th:href="${hasReviewed} ? @{/album/info(id=${album.id}, sort='my')} : @{/album/review/new(id=${album.id})}"
+                   th:classappend="${hasReviewed} ? 'btn btn-outline-success' : 'btn btn-outline-primary'"
+                   style="position: sticky; margin-left: 170px; margin-top: 130px; font-size: 1.5rem; padding: 15px 25px; text-decoration: none; border-radius: 15px; z-index: 1000;"
+                   th:text="${hasReviewed} ? '내 리뷰보기' : '리뷰 쓰기'"></a>
+
+            </div>
+        </div>
+
+        <input type="hidden" th:value="${sort}" id="sort" name="sort">
+
+        <!-- 수평선 -->
+        <hr style="margin-top: 30px;">
+
+        <div class="row mt-3">
+            <div class="col-9">
+                <!-- 정렬 옵션 -->
+                <div class="d-flex justify-content-start mb-3" style="font-size: 0.8rem;">
+                    <a th:href="@{/album/info(id=${album.id}, sort='popular')}"
+                       th:styleappend="${sort == 'popular'} ? 'font-weight: bold;' : ''"
+                       class="btn btn-link p-0" style="text-decoration: none; margin-right: 8px;">인기순</a>
+                    <span style="margin-right: 8px; color: gray; font-size: 0.8rem;">|</span>
+
+                    <a th:href="@{/album/info(id=${album.id}, sort='highest')}"
+                       th:styleappend="${sort == 'highest'} ? 'font-weight: bold;' : ''"
+                       class="btn btn-link p-0" style="text-decoration: none; margin-right: 8px;">평점 높은 순</a>
+                    <span style="margin-right: 8px; color: gray; font-size: 0.8rem;">|</span>
+
+                    <a th:href="@{/album/info(id=${album.id}, sort='lowest')}"
+                       th:styleappend="${sort == 'lowest'} ? 'font-weight: bold;' : ''"
+                       class="btn btn-link p-0" style="text-decoration: none; margin-right: 8px;">평점 낮은 순</a>
+                    <span style="margin-right: 8px; color: gray; font-size: 0.8rem;">|</span>
+
+                    <a th:href="@{/album/info(id=${album.id}, sort='newest')}"
+                       th:styleappend="${sort == 'newest'} ? 'font-weight: bold;' : ''"
+                       class="btn btn-link p-0" style="text-decoration: none; margin-right: 8px;">최신순</a>
+                    <span style="margin-right: 8px; color: gray; font-size: 0.8rem;">|</span>
+
+                    <a th:href="@{/album/info(id=${album.id}, sort='oldest')}"
+                       th:styleappend="${sort == 'oldest'} ? 'font-weight: bold;' : ''"
+                       class="btn btn-link p-0" style="text-decoration: none; margin-right: 8px;">오래된 순</a>
+                </div>
+
+
+                <!-- 리뷰 리스트 -->
+                <ul class="list-group" th:if="${#lists.size(reviews) > 0}" style="border: none;">
+                    <li class="list-group-item" th:each="review : ${reviews}"
+                        style="margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); padding: 20px;">
+                        <div class="d-flex" style="gap: 10px;">
+                            <!-- 작은 앨범 이미지 -->
+                            <div style="flex-shrink: 0;">
+                                <img th:src="${album_default_image}" alt="profile"
+                                     style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                            </div>
+
+                            <!-- 작성자 정보 및 작성 날짜 -->
+                            <div style="flex: 1;">
+                                <div class="d-flex align-items-center justify-content-between" style="height: 40px;">
+                                    <!-- 닉네임과 작성 날짜 -->
+                                    <p style="font-size: 0.8rem; margin: 0;">
+                                        <span th:text="${review.user.nickname}" style="font-weight: bold;"></span> 님이 작성 |
+                                        <span th:text="${#temporals.format(review.regDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                    </p>
+
+                                    <div class="d-flex align-items-center" style="gap: 10px;">
+                                        <!-- 좋아요 -->
+                                        <div class="d-flex align-items-center" style="gap: 5px;">
+                                            <i class="far fa-thumbs-up" style="color: blue; font-size: 1rem;"></i>
+                                            <span th:text="${review.likes}" style="font-size: 0.8rem; color: gray;"></span>
+                                        </div>
+                                        <!-- 싫어요 -->
+                                        <div class="d-flex align-items-center" style="gap: 5px;">
+                                            <i class="far fa-thumbs-down" style="color: red; font-size: 1rem;"></i>
+                                            <span th:text="${review.dislikes}" style="font-size: 0.8rem; color: gray;"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div style="color: gold; font-size: 1rem;">
+                                    <!-- 꽉 찬 별 -->
+                                    <span th:each="i : ${#numbers.sequence(1, T(java.lang.Math).floor(review.rating))}" th:if="${T(java.lang.Math).floor(review.rating) > 0}">
+                        <i class="fas fa-star"></i>
+                    </span>
+                                    <!-- 반쪽 별 -->
+                                    <span th:if="${review.rating - T(java.lang.Math).floor(review.rating) >= 0.5}">
+                        <i class="fas fa-star-half"></i>
+                    </span>
+                                </div>
+
+                                <!-- 타이틀과 리뷰 내용을 아래로 배치 -->
+                                <div style="margin-top: 15px;">
+                                    <p th:text="${review.title}" style="margin-bottom: 13px; font-size: 1.1rem; font-weight: bold;"></p>
+                                    <p th:text="${review.content}" style="font-size: 0.9rem; margin: 0; white-space: pre-wrap;"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+
+                <!-- 리뷰가 없을 경우 -->
+                <div class="card text-center py-5" th:if="${#lists.size(reviews) == 0}">
+                    <p style="font-size: 1.2rem; color: gray;">아직 작성된 리뷰가 없습니다</p>
+                </div>
+
+                <!-- 페이지네이션과 글쓰기 버튼 -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <!-- 페이지네이션 중앙 정렬 -->
+                    <nav class="mx-auto">
+                        <ul class="pagination mb-0">
+                            <!-- 이전 페이지 -->
+                            <li class="page-item" th:classappend="${currentGroupStart == 0} ? 'disabled'">
+                                <a class="page-link" th:if="${currentPage > 0}"
+                                   th:href="@{/album/info(id=${album.id}, sort=${sort}, page=${currentGroupStart - 1})}">이전</a>
+                                <span class="page-link" th:if="${currentPage == 0}">이전</span>
+                            </li>
+
+                            <!-- 페이지 번호 -->
+                            <li class="page-item"
+                                th:each="pageNum, iterStat : ${totalPages > 0 ? #numbers.sequence(currentGroupStart, currentGroupEnd) : #numbers.sequence(currentPage, currentPage)}"
+                                th:classappend="${pageNum == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/album/info(id=${album.id}, sort=${sort}, page=${pageNum})}"
+                                   th:text="${pageNum + 1}"></a>
+                            </li>
+
+                            <!-- 다음 페이지 -->
+                            <li class="page-item" th:classappend="${currentGroupEnd + 1 >= totalPages} ? 'disabled'">
+                                <a class="page-link" th:href="@{/album/info(id=${album.id}, sort=${sort}, page=${currentGroupEnd + 1})}">다음</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <!-- 별점 카드 -->
+                <div th:if="${ratingsAndTotalReviews['totalReviews'] != '0'}" class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); padding: 20px;">
+                    <div class="card-header text-center mb-3" style="font-size: 0.9rem; font-weight: bold;">
+                        <i class="fa-solid fa-pencil" style="color: black; margin-right: 8px;"></i>
+                        유저 평가
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3" style="font-size: 1rem;">
+                            <!-- 레이블 -->
+                            <div style="flex: 1; text-align: right; margin-right: 10px;">
+                                <span>음악적 완성도</span>
+                            </div>
+                            <!-- 평점 -->
+                            <div style="flex: 1; text-align: left;">
+                                <span id="emoji-completion" class="emoji">🙂</span>
+                                <span style="font-weight: bold;" id="rating-completion" th:text="${ratingsAndTotalReviews['avgRatingCompletion']}"></span>/5
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3" style="font-size: 1rem;">
+                            <!-- 레이블 -->
+                            <div style="flex: 1; text-align: right; margin-right: 10px;">
+                                <span>트랙 간 유기성</span>
+                            </div>
+                            <!-- 평점 -->
+                            <div style="flex: 1; text-align: left;">
+                                <span id="emoji-cohesion" class="emoji">😐</span>
+                                <span style="font-weight: bold;" id="rating-cohesion" th:text="${ratingsAndTotalReviews['avgRatingCohesion']}"></span>/5
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center" style="font-size: 1rem;">
+                            <!-- 레이블 -->
+                            <div style="flex: 1; text-align: right; margin-right: 10px;">
+                                <span>재청취 욕구</span>
+                            </div>
+                            <!-- 평점 -->
+                            <div style="flex: 1; text-align: left;">
+                                <span id="emoji-replayability" class="emoji">☹️</span>
+                                <span style="font-weight: bold;" id="rating-replayability" th:text="${ratingsAndTotalReviews['avgRatingReplayability']}"></span>/5
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 관련 인터뷰 -->
+                <div class="card mb-4" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); padding: 20px;">
+                    <div class="card-header text-center mb-3" style="font-size: 0.9rem; font-weight: bold;"> <!-- 글씨 크기 줄임 -->
+                        <i class="fas fa-microphone" style="color: black; margin-right: 8px;"></i>
+                        관련 인터뷰
+                    </div>
+                    <div class="card-body" style="max-height: 180px; overflow-y: auto;"> <!-- 스크롤 추가 -->
+                        <!-- 인터뷰 반복 -->
+                        <div th:each="entry : ${interviews}" class="d-flex align-items-center mb-2" style="font-size: 0.9rem;"> <!-- 글씨 크기 줄임 -->
+                            <!-- 인터뷰 아이콘 및 제목 -->
+                            <div style="flex: 1; text-align: left; display: flex; align-items: flex-start; gap: 5px;">
+                                <span>📹</span> <!-- 아이콘 -->
+                                <a th:href="${entry.value}" target="_blank" style="text-decoration: none; color: inherit;">
+                                    <span th:text="${entry.key}"></span> <!-- 제목 -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 카드 타이틀 -->
+                <div class="card" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); padding: 20px;">
+                    <div class="card-header text-center mb-2" style="font-size: 0.9rem; font-weight: bold;">
+                        <i class="fas fa-compact-disc" style="color: black; margin-right: 8px;"></i>
+                        <span th:text="${album.artistName} + ' 의 다른 앨범'"></span>
+                    </div>
+                    <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                        <div class="row">
+                            <!-- 반복문으로 relatedAlbums의 값을 출력 -->
+                            <div class="col-6 mb-4" th:each="related : ${relatedAlbums}">
+                                <!-- 앨범 사진 -->
+                                <a th:href="@{/album/info(id=${related.id})}">
+                                    <img th:src="${related.s3url}" alt="Related Album Cover"
+                                         class="img-fluid"
+                                         style="object-fit: cover; width: 100%; height: auto; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);">
+                                </a>
+                                <!-- 앨범 제목 -->
+                                <a th:href="@{/album/info(id=${related.id})}"
+                                   style="text-decoration: none; color: gray; font-size: 0.9rem; display: block; text-align: center; margin-top: 8px;">
+                                    <span th:text="${related.title}"></span>
+                                    <span style="color: black;"> / </span>
+                                    <span th:text="${#strings.substring(related.year, 0, 4)}"></span>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<script layout:fragment="script" th:inline="javascript">
+    // 이모티콘 변경 함수
+    function updateEmoji(ratingStr, elementId) {
+        const emojiElement = document.getElementById(elementId);
+        const rating = parseFloat(ratingStr); // String 값을 float으로 변환
+        if (isNaN(rating)) {
+            emojiElement.textContent = "❓"; // 평점 값이 비정상인 경우
+            return;
+        }
+        if (rating >= 4.0) {
+            emojiElement.textContent = "😊"; // 긍정
+        } else if (rating >= 2.5) {
+            emojiElement.textContent = "😐"; // 중간
+        } else {
+            emojiElement.textContent = "☹️"; // 부정
+        }
+    }
+
+    // DOMContentLoaded 이벤트
+    document.addEventListener("DOMContentLoaded", function () {
+        const completionRating = document.getElementById("rating-completion").textContent.trim();
+        const cohesionRating = document.getElementById("rating-cohesion").textContent.trim();
+        const replayabilityRating = document.getElementById("rating-replayability").textContent.trim();
+
+        updateEmoji(completionRating, "emoji-completion");
+        updateEmoji(cohesionRating, "emoji-cohesion");
+        updateEmoji(replayabilityRating, "emoji-replayability");
+    });
+</script>
+</html>
