@@ -117,83 +117,83 @@ src/
 ## UX/UI Documentation (Updated on 07/04/2025)
 
 ### 1. Main Page (Landing Page)
-![Main Page](/resources/static/assets/ui/mainPage.png)
+![Main Page](src/main/resources/static/assets/ui/mainPage.png)
 
 ### 2. Authentication & Registration
 #### Login Related Pages
 - **Login Page**  
-  ![Login Page](/resources/static/assets/ui/loginPage.png)
+  ![Login Page](src/main/resources/static/assets/ui/loginPage.png)
 - **Registration Page**  
-  ![Registration Page](/resources/static/assets/ui/registerPage.png)
+  ![Registration Page](src/main/resources/static/assets/ui/registerPage.png)
   - With Validation:  
-    ![Registration with Validation](/resources/static/assets/ui/registerPage_validation.png)
+    ![Registration with Validation](src/main/resources/static/assets/ui/registerPage_validation.png)
   - Registration Complete:  
-    ![Registration Complete](/resources/static/assets/ui/finishedRegisterPage.png)
+    ![Registration Complete](src/main/resources/static/assets/ui/finishedRegisterPage.png)
   - Email Verification:  
-    ![Email Verification](/resources/static/assets/ui/registerEmailVerificationPage.png)
+    ![Email Verification](src/main/resources/static/assets/ui/registerEmailVerificationPage.png)
 - **ID/Password Recovery**  
-  ![Find ID/Password](/resources/static/assets/ui/findIdPwPage.png)
+  ![Find ID/Password](src/main/resources/static/assets/ui/findIdPwPage.png)
   - Email Verification:  
-    ![Email Verification for Recovery](/resources/static/assets/ui/findIdPwPage_email_verify.png)
+    ![Email Verification for Recovery](src/main/resources/static/assets/ui/findIdPwPage_email_verify.png)
 
 ### 3. Albums Section
 #### Album Listing
-![Albums Page](/resources/static/assets/ui/albumsPage.png)
-![Albums Page Alternative View](/resources/static/assets/ui/albumsPage2.png)
+![Albums Page](src/main/resources/static/assets/ui/albumsPage.png)
+![Albums Page Alternative View](src/main/resources/static/assets/ui/albumsPage2.png)
 > Note: "Register Artist" and "Register Album" buttons are only visible to administrators
 
 #### Album Details
 - **Without Reviews**  
-  ![Album Details](/resources/static/assets/ui/albumsPage_read.png)
-  ![Album Details Extended](/resources/static/assets/ui/albumsPage_read2.png)
+  ![Album Details](src/main/resources/static/assets/ui/albumsPage_read.png)
+  ![Album Details Extended](src/main/resources/static/assets/ui/albumsPage_read2.png)
 - **With Reviews**  
-  ![Album with Reviews](/resources/static/assets/ui/albumsPage_review3.png)
-  ![Album with Reviews Extended](/resources/static/assets/ui/albumsPage_review4.png)
+  ![Album with Reviews](src/main/resources/static/assets/ui/albumsPage_review3.png)
+  ![Album with Reviews Extended](src/main/resources/static/assets/ui/albumsPage_review4.png)
 
 #### Review Management
 - **Write Review Page**  
-  ![Write Review](/resources/static/assets/ui/reviewPage.png)
+  ![Write Review](src/main/resources/static/assets/ui/reviewPage.png)
 - **Album Registration** (Admin Only)  
-  ![Upload New Album](/resources/static/assets/ui/uploadNewAlbumPage_admin.png)
+  ![Upload New Album](src/main/resources/static/assets/ui/uploadNewAlbumPage_admin.png)
 
 ### 4. Artists Section
 #### Artist Listing
-![Artists Page](/resources/static/assets/ui/artistsPage.png)
-![Artists Page Alternative View](/resources/static/assets/ui/artistsPage2.png)
+![Artists Page](src/main/resources/static/assets/ui/artistsPage.png)
+![Artists Page Alternative View](src/main/resources/static/assets/ui/artistsPage2.png)
 > Note: "Register Artist" and "Register Album" buttons are only visible to administrators
 
 #### Artist Management
 - **Artist Registration** (Admin Only)  
-  ![Upload New Artist](/resources/static/assets/ui/uploadNewArtistPage_admin.png)
+  ![Upload New Artist](src/main/resources/static/assets/ui/uploadNewArtistPage_admin.png)
 
 ### 5. Announcements Section
 #### Announcement Listing
-![Announcements Page](/resources/static/assets/ui/announcementPage.png)
+![Announcements Page](src/main/resources/static/assets/ui/announcementPage.png)
 > Note: "Write" button is only visible to administrators
 
 #### Announcement Management
 - **View Announcement**  
-  ![Read Announcement](/resources/static/assets/ui/announcementPage_read.png)
+  ![Read Announcement](src/main/resources/static/assets/ui/announcementPage_read.png)
 - **Edit Announcement** (Admin Only)  
-  ![Edit Announcement](/resources/static/assets/ui/accouncementPage_edit.png)
+  ![Edit Announcement](src/main/resources/static/assets/ui/accouncementPage_edit.png)
 
 ### 6. Support Section
 #### Information Pages
 - **About Page**  
-  ![About Page](/resources/static/assets/ui/aboutPage.png)
+  ![About Page](src/main/resources/static/assets/ui/aboutPage.png)
 - **Artist Request** (Logged-in Users Only)  
-  ![Artist Request](/resources/static/assets/ui/artistRequestPage_user.png)
+  ![Artist Request](src/main/resources/static/assets/ui/artistRequestPage_user.png)
 - **Feedback** (Logged-in Users Only)  
-  ![Feedback Page](/resources/static/assets/ui/feedbackPage_user.png)
+  ![Feedback Page](src/main/resources/static/assets/ui/feedbackPage_user.png)
 - **FAQ**  
-  ![FAQ Page](/resources/static/assets/ui/faqPage.png)
+  ![FAQ Page](src/main/resources/static/assets/ui/faqPage.png)
 - **Terms of Service**  
-  ![Terms Page](/resources/static/assets/ui/termsPage.png)
+  ![Terms Page](src/main/resources/static/assets/ui/termsPage.png)
 - **Development Log**  
-  ![Development Log](/resources/static/assets/ui/devlogPage.png)
-  ![Development Log Extended](/resources/static/assets/ui/devlogPage2.png)
+  ![Development Log](src/main/resources/static/assets/ui/devlogPage.png)
+  ![Development Log Extended](src/main/resources/static/assets/ui/devlogPage2.png)
 
 ### 7. User Profile
 #### Profile Pages (Logged-in Users Only)
-![Profile Page](/resources/static/assets/ui/profilePage.png)
-![Profile Page Extended](/resources/static/assets/ui/profilePage2.png)
+![Profile Page](src/main/resources/static/assets/ui/profilePage.png)
+![Profile Page Extended](src/main/resources/static/assets/ui/profilePage2.png)
