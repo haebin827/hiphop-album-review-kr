@@ -13,7 +13,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ProfileController {
 
     @GetMapping("/home")
-    public void home() {
-
-    }
+    public void home() {}
 }

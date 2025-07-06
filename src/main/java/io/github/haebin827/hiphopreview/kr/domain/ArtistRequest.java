@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -47,6 +44,9 @@ public class ArtistRequest {
     @Column
     private String s3url;
 
+    @Column
+    private String uuid;
+    
     @Column(nullable = false, columnDefinition = "TEXT")
     private String note;
 

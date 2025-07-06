@@ -1,14 +1,88 @@
 <!doctype html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base.html}">
 
-<div layout:fragment="content">
-    <h1>main page</h1>
+<div layout:fragment="content" class="col-11 mx-auto" style="margin-top: 50px; margin-bottom: 30px;">
+    <h3>앨범</h3>
+    <hr class="mb-4">
 
+    <div class="d-flex align-items-baseline mb-4">
+        <div style="text-align: left; font-size: 1.15rem;">최근 발매된 앨범</div>
+    </div>
+
+    <div id="albumCarousel" class="carousel slide" data-bs-ride="carousel">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#albumCarousel" th:each="albumPartition, iterStat : ${partitionedAlbums}"
+                    th:data-bs-slide-to="${iterStat.index}"
+                    th:classappend="${iterStat.index == 0 ? 'active' : ''}"
+                    aria-label="Slide [[${iterStat.index + 1}]]">
+            </button>
+        </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner text-center">
+            <div class="carousel-item" th:each="albumPartition, iterStat : ${partitionedAlbums}" th:classappend="${iterStat.index == 0 ? 'active' : ''}">
+                <div class="row justify-content-center" style="height: 200px;">
+                    <div class="col-9">
+                        <div class="row gx-2">
+                            <div class="col-2" th:each="album : ${albumPartition}">
+                                <div class="card h-100" style="font-size: 0.8rem;">
+                                    <a th:href="@{/album/info(id=${album.id})}">
+                                        <img class="card-img-top"
+                                             th:src="${album.s3url}"
+                                             alt="Album Cover"
+                                             style="height: 100px; width: auto; object-fit: cover;" />
+                                    </a>
+                                    <div class="card-body p-2 text-center">
+                                        <p class="text-muted mb-1" style="font-size: 0.65rem;" th:text="${album.artist.name}"></p>
+                                        <h6 class="card-title" style="font-size: 0.75rem; line-height: 1.2;" th:text="${album.title}"></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#albumCarousel" data-bs-slide="prev" style="width: 5%;">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#albumCarousel" data-bs-slide="next" style="width: 5%;">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>
 
-<script layout:fragment="script" th:inline="javascript">
+<!-- Custom CSS -->
+<style>
+    /* Carousel 컨트롤 위치 */
+    .carousel-control-prev,
+    .carousel-control-next {
+        top: 50%;
+        transform: translateY(-50%);
+    }
 
-</script>
+    /* 카드 간격 */
+    .row.gx-2 > [class*="col-"] {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    /* 중앙 정렬 */
+    .carousel-inner {
+        text-align: center;
+    }
+
+    /* 제목 스타일 */
+    .mb-3 {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+</style>
 </html>

@@ -50,6 +50,7 @@ public class Review {
     @Column
     private float ratingReplayability;
 
+    @Setter
     @Column(nullable = false)
     private int likes;
 
@@ -63,10 +64,6 @@ public class Review {
     @LastModifiedDate
     @Column
     private LocalDateTime modDate;
-
-    public void setLikes(int newLikes) {
-        likes=newLikes ;
-    }
 
     @PrePersist
     protected void onCreate() {

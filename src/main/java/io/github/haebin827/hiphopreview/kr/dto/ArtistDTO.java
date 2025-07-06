@@ -25,10 +25,9 @@ public class ArtistDTO {
     @NotEmpty(message = "이름은 필수 입력 항목입니다.")
     private String name;
 
-    @NotEmpty(message = "성별은 필수 입력 항목입니다.")
+    //@NotEmpty(message = "성별은 필수 입력 항목입니다.")
     private String gender;
 
-    // radio button으로
     @NotEmpty(message = "유형은 필수 입력 항목입니다.")
     private String type;
 
@@ -44,10 +43,16 @@ public class ArtistDTO {
 
     private MultipartFile image;
 
+    private String s3url;
+
+    private String instaId;
+
+    private String twitterId;
+
     private String uuid;
 
     //private List<String> albumNames;
 
-    private List<AlbumDTO> albums;
+    //private List<AlbumDTO> albums;
 
 }

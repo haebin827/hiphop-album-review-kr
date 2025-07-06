@@ -1,13 +1,11 @@
 package io.github.haebin827.hiphopreview.kr.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.haebin827.hiphopreview.kr.dto.AlbumDTO;
-import io.github.haebin827.hiphopreview.kr.dto.AnnouncementDTO;
-import io.github.haebin827.hiphopreview.kr.dto.ReviewDTO;
-import io.github.haebin827.hiphopreview.kr.dto.UserDTO;
+import io.github.haebin827.hiphopreview.kr.dto.*;
 import io.github.haebin827.hiphopreview.kr.service.AlbumService;
 import io.github.haebin827.hiphopreview.kr.service.ReviewService;
 import io.github.haebin827.hiphopreview.kr.util.CustomUserDetails;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
@@ -19,7 +17,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,14 +43,9 @@ public class AlbumController {
     @GetMapping("/list")
     public void listGET(@RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "28") int size,
-                        @RequestParam(value = "searchType", required = false) String searchType,
+                        @RequestParam(value = "searchType", defaultValue = "album") String searchType,
                         @RequestParam(value = "keyword", required = false) String keyword,
                         Model model) {
-
-        log.info("PAGE: " + page);
-        log.info("SIZE: " + size);
-        log.info("KEYWORD: " + keyword);
-        log.info("SEARCH TYPE: " + searchType);
 
         String album_default_image = "https://" + bucket + ".s3." + region + ".amazonaws.com/album_default_image.png";
 
@@ -98,7 +93,7 @@ public class AlbumController {
             hasReviewed = rs.hasUserReviewedAlbum(userId, id);
         }
 
-        List<AlbumDTO> relatedAlbums = as.getAlbumsByArtist(albumDTO.getArtistId());
+        List<AlbumDTO> relatedAlbums = as.getAlbumsByArtist(albumDTO.getArtist().getId());
         Page<ReviewDTO> reviews = rs.getReviews(page, size, id, sort, userId);
         HashMap<String, String> ratingsAndTotalReviews = as.getRatingsAndTotalReviews(id);
 
@@ -140,6 +135,39 @@ public class AlbumController {
         model.addAttribute("awards", awards);
         model.addAttribute("interviews", interviews);
         model.addAttribute("album", albumDTO);
+    }
+
+    @GetMapping("/new")
+    public void newGET(Model model) {
+        List<AlbumSecondaryTypeDTO> secondaryTypes = as.getSecondaryTypes();
+
+        model.addAttribute("secondaryTypes", secondaryTypes);
+
+    }
+
+    @PostMapping("/new")
+    public String newPOST(@Valid @ModelAttribute AlbumDTO albumDTO,
+                          BindingResult bindingResult,
+                          RedirectAttributes redirectAttributes) {
+
+        log.info("ALBUM: " + albumDTO);
+
+        if(bindingResult.hasErrors()) {
+            log.info("[ERROR] ALBUM UPLOAD");
+            log.info(bindingResult.getAllErrors().toString());
+            return "album/new";
+        }
+
+        // 요청 저장
+        try {
+            as.saveAlbum(albumDTO);
+        } catch (Exception e) {
+            log.info("FAIL TO SAVE ALBUM: " + e);
+            return "album/new"; // Return to the form page with an error
+        }
+
+        redirectAttributes.addFlashAttribute("success", true);
+        return "redirect:/album/new";
     }
 
     @GetMapping("/review/new")

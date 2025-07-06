@@ -1,10 +1,7 @@
 package io.github.haebin827.hiphopreview.kr.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +12,7 @@ import java.time.LocalDateTime;
 public class ReviewDTO {
     private Integer id;
 
+    @ToString.Exclude
     @NotNull
     private UserDTO user;
 
@@ -36,16 +34,28 @@ public class ReviewDTO {
     private float rating;
 
     @Min(0)
+    @Max(5)
+    private float ratingCompletion;
+
+    @Min(0)
+    @Max(5)
+    private float ratingCohesion;
+
+    @Min(0)
+    @Max(5)
+    private float ratingReplayability;
+
+    @Min(0)
     private int likes;
 
     @Min(0)
     private int dislikes;
 
+    private boolean likedByCurrentUser;
+
     private LocalDateTime regDate;
 
     private LocalDateTime modDate;
-
-    private boolean isDeleted;
 
     /*public Integer getUserId() {
         return user.getId();

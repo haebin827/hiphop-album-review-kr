@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/announce")
@@ -67,11 +71,11 @@ public class AnnouncementController {
         log.info("SIZE: " + size);
         log.info("KEYWORD: " + keyword);
 
-        Page<Announcement> announcements = as.getAnnouncements(keyword, page, size);
+        Page<AnnouncementDTO> announcements = as.getAnnouncements(keyword, page, size);
 
         // 기본 목록 데이터
         if (keyword == null || keyword.isEmpty()) {
-            List<Announcement> importantAnnouncements = as.getImportantAnnouncements();
+            List<AnnouncementDTO> importantAnnouncements = as.getImportantAnnouncements();
             model.addAttribute("importantAnnouncements", importantAnnouncements);
         }
 
@@ -90,15 +94,26 @@ public class AnnouncementController {
         model.addAttribute("currentGroupEnd", currentGroupEnd);
         model.addAttribute("startIndex", startIndex);
         model.addAttribute("keyword", keyword); // 검색어 전달
+
+        // 권한 목록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet())
+                .contains("ROLE_ADMIN");
+
+        // Model에 데이터 추가
+        model.addAttribute("isAdmin", isAdmin);
     }
 
 
-    //나중에 이거 활성화해 @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/new")
     public void newGET() {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/new")
     public String newPOST(@Valid AnnouncementDTO announcementDTO,
                           BindingResult bindingResult,
@@ -125,24 +140,36 @@ public class AnnouncementController {
         as.incrementViews(id);
 
         // 공지사항 데이터
-        Announcement announcement = as.getAnnouncement(id);
+        AnnouncementDTO announcement = as.getAnnouncement(id);
         if (announcement == null) {
             throw new IllegalArgumentException("Invalid announcement ID: " + id);
         }
 
         model.addAttribute("announcement", announcement);
         model.addAttribute("page", page);
+
+        // 권한 목록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet())
+                .contains("ROLE_ADMIN");
+
+        // Model에 데이터 추가
+        model.addAttribute("isAdmin", isAdmin);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/edit")
     public void editGET(@RequestParam("id") Integer id, Model model) {
-        Announcement announcement = as.getAnnouncement(id);
+        AnnouncementDTO announcement = as.getAnnouncement(id);
         if (announcement == null) {
             throw new IllegalArgumentException("Invalid announcement ID: " + id);
         }
         model.addAttribute("announcement", announcement);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/edit")
     public String editPOST(@ModelAttribute AnnouncementDTO announcementDTO, RedirectAttributes redirectAttributes) {
         try {
@@ -155,7 +182,7 @@ public class AnnouncementController {
         return "redirect:/announce/read?id=" + announcementDTO.getId();
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delete")
     public String deletePOST(@RequestParam("id") Integer id,
                              @RequestParam("page") int page, // 페이지 번호를 받아옴

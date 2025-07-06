@@ -2,6 +2,9 @@ package io.github.haebin827.hiphopreview.kr.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,4 +26,13 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime regDate;
+
+    @PrePersist
+    protected void onCreate() {
+        regDate = LocalDateTime.now();
+    }
 }

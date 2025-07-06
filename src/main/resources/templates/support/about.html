@@ -33,20 +33,20 @@
         </p>
 
 
-        <div th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
+        <!--<div th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
             <p>ROLE_USER 사용자만 볼 수 있는 콘텐츠</p>
         </div>
 
         <p th:if="${#authentication != null and #authentication.principal != null}" th:text="${#authentication.principal.username}"></p><br>
 
-        <!-- User만 볼 수 있는 컴포넌트 -->
+        &lt;!&ndash; User만 볼 수 있는 컴포넌트 &ndash;&gt;
         <div th:if="${isUser}">
             <p>This content is visible to users only.</p>
         </div>
 
 
 
-        <p th:text="${#authentication.principal}">Principal Object</p>
+        <p th:text="${#authentication.principal}">Principal Object</p>-->
 
     </div>
 </div>

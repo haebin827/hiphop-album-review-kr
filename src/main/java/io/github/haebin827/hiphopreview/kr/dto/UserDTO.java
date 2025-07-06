@@ -3,10 +3,7 @@ package io.github.haebin827.hiphopreview.kr.dto;
 import io.github.haebin827.hiphopreview.kr.domain.Follow;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -51,6 +48,7 @@ public class UserDTO {
 
     private LocalDateTime regDate;
 
+    @ToString.Exclude
     private List<ReviewDTO> reviews;
 
     private List<AlbumRequestDTO> albumRequests;

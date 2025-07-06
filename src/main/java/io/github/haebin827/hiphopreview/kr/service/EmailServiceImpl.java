@@ -14,9 +14,11 @@ import jakarta.mail.internet.MimeMessage;
 @Log4j2
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
+
     private final JavaMailSender mailSender;
 
     public void sendVerificationEmail(String to, String verificationCode) {
+
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
         try {

@@ -25,14 +25,15 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket.albums}")
     public String imageBucket;
 
-    @Value("${cloud.aws.s3.bucket.profilepics}")
-    public String profileBucket;
+    //@Value("${cloud.aws.s3.bucket.profilepics}")
+    //public String profileBucket;
 
     // S3로 파일 업로드 (목적에 따라 버킷 선택)
     public String upload(String filePath, String bucketType) {
         log.info("S3 UPLOADER................");
         File targetFile = new File(filePath);
         String bucketName = resolveBucket(bucketType);
+        log.info("BucketName: " + bucketName);
 
         String fileNameWithExtension = generateFileNameWithExtension(targetFile);
         String uploadImageUrl = putS3(targetFile, bucketName, fileNameWithExtension);
@@ -43,22 +44,29 @@ public class S3Uploader {
 
     // 버킷 이름 선택
     private String resolveBucket(String bucketType) {
-        log.info("S3 resolve Bucket type: " + bucketType);
+        log.info("S3Uploader: S3 resolve Bucket type - " + bucketType);
 
         switch (bucketType) {
-            case "user":
-                return profileBucket;
+            /*case "user":
+                log.info("SWITCH CASE-USER");
+                return profileBucket;*/
             case "image":
+                log.info("SWITCH CASE-IMAGE");
                 return imageBucket;
             default:
-                throw new IllegalArgumentException("Invalid bucket type: " + bucketType);
+                log.error("S3Uploader: Invalid bucket type provided - " + bucketType);
+                throw new IllegalArgumentException("S3Uploader: Invalid bucket type - " + bucketType);
         }
     }
 
     // 확장자가 포함된 파일 이름 생성
     private String generateFileNameWithExtension(File file) {
         String originalName = file.getName();
-        String extension = "";
+        // 파일 이름에서 확장자를 제거
+        String baseName = originalName.contains(".") ? originalName.substring(0, originalName.lastIndexOf(".")) : originalName;
+        // `.png` 확장자를 강제로 추가
+        return baseName + ".png";
+        /*String extension = "";
 
         try {
             // Tika로 파일 MIME 타입 감지
@@ -88,9 +96,9 @@ public class S3Uploader {
         }
 
         if (!originalName.contains(".")) {
-            return originalName + extension; // 기존 이름에 확장자 추가
+            return originalName + ".png"; // 기존 이름에 확장자 추가
         }
-        return originalName; // 이미 확장자가 있으면 그대로 사용
+        return originalName + ".png"; // 이미 확장자가 있으면 그대로 사용*/
     }
 
     // S3로 업로드
@@ -98,7 +106,7 @@ public class S3Uploader {
         try {
             // MIME 타입 감지
             String mimeType = tika.detect(uploadFile);
-            log.info("Detected MIME Type for S3 upload: " + mimeType);
+            log.info("S3Uploader: Detected MIME Type for S3 upload - " + mimeType);
 
             // 메타데이터에 Content-Type 설정
             ObjectMetadata metadata = new ObjectMetadata();
@@ -111,28 +119,42 @@ public class S3Uploader {
 
             amazonS3Client.putObject(putObjectRequest);
 
-            log.info("S3 PUTS3: " + amazonS3Client.getUrl(bucketName, fileName).toString());
+            log.info("S3Uploader: S3 PUTS3 - " + amazonS3Client.getUrl(bucketName, fileName).toString());
             return amazonS3Client.getUrl(bucketName, fileName).toString();
         } catch (IOException e) {
-            log.error("Error while detecting MIME type: " + e.getMessage());
-            throw new RuntimeException("Failed to upload file to S3", e);
+            log.error("S3Uploader: Error while detecting MIME type for file - " + uploadFile.getName(), e);
+            throw new RuntimeException("S3Uploader: Failed to upload file to S3 due to MIME type detection error - ", e);
+        } catch (Exception e) {
+            log.error("S3Uploader: Unexpected error during S3 upload for file - " + uploadFile.getName(), e);
+            throw new RuntimeException("S3Uploader: Failed to upload file to S3 - ", e);
         }
     }
 
     // S3 업로드 후 원본 파일 삭제
     private void removeOriginalFile(File targetFile) {
-        if (targetFile.exists() && targetFile.delete()) {
-            log.info("File delete success");
-            return;
+        if (targetFile.exists()) {
+            if (targetFile.delete()) {
+                log.info("S3Uploader: File deleted successfully - " + targetFile.getAbsolutePath());
+            } else {
+                log.warn("S3Uploader: Failed to delete file - " + targetFile.getAbsolutePath());
+                throw new RuntimeException("S3Uploader: Failed to delete original file - " + targetFile.getAbsolutePath());
+            }
+        } else {
+            log.warn("S3Uploader: File does not exist - " + targetFile.getAbsolutePath());
         }
-        log.info("fail to remove");
     }
 
     // S3 파일 삭제
     public void removeS3File(String bucketType, String fileName) {
-        String bucketName = resolveBucket(bucketType);
-        final DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileName);
-        amazonS3Client.deleteObject(deleteObjectRequest);
+        try {
+            String bucketName = resolveBucket(bucketType);
+            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileName);
+            amazonS3Client.deleteObject(deleteObjectRequest);
+            log.info("S3Uploader: Successfully deleted file from S3 - " + fileName);
+        } catch (Exception e) {
+            log.error("S3Uploader: Failed to delete file from S3 - " + fileName, e);
+            throw new RuntimeException("S3Uploader: Failed to delete file from S3 - " + fileName, e);
+        }
     }
 }
 

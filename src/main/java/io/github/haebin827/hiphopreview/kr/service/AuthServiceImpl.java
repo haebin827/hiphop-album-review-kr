@@ -29,15 +29,17 @@ import java.util.stream.Collectors;
 @Transactional
 public class AuthServiceImpl implements AuthService, UserDetailsService  {
 
-    private final UserRepository ur;
-    private final RoleRepository rr;
+    private final UserRepository userRepo;
+    private final RoleRepository roleRepo;
     private final ModelMapper mm;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = ur.findByUsername(username); // 데이터베이스에서 사용자 조회
+
+        User user = userRepo.findByUsername(username);
         log.info("USER: " + user);
+
         if (user == null) {
             throw new UsernameNotFoundException("User not found"); // 사용자가 존재하지 않을 경우 예외 발생
         }
@@ -56,23 +58,24 @@ public class AuthServiceImpl implements AuthService, UserDetailsService  {
                 user.getNickname(),
                 authorities
         );
-        log.info("CustomUserDetails: {}", customUserDetails); // 디버깅: 반환된 객체 확인
+
+        log.info("CustomUserDetails: {}", customUserDetails);
         return customUserDetails;
     }
 
     public void registerUser(UserDTO userDTO) {
+
         // 비밀번호 암호화
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        // UserDTO를 User 엔터티로 변환
         User user = mm.map(userDTO, User.class);
+
         // 기본 역할 설정
-        Role userRole = rr.findByName("ROLE_USER");
+        Role userRole = roleRepo.findByName("ROLE_USER");
         if (userRole == null) {
             throw new RuntimeException("Default role ROLE_USER not found in database");
         }
         user.addRole(userRole);
-        // User 저장
-        ur.save(user);
+        userRepo.save(user);
     }
 
 }

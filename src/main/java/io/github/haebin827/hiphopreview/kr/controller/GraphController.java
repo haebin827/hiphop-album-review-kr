@@ -15,7 +15,7 @@ public class GraphController {
 
     @GetMapping
     public Map<String, Integer> getRatings() {
-        // 예제 데이터: 별점(0~5)에 따른 빈도
+
         Map<String, Integer> ratings = new LinkedHashMap<>();
         ratings.put("0", 2);  // 별점 0
         ratings.put("1", 4);  // 별점 1

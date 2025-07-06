@@ -1,10 +1,18 @@
 package io.github.haebin827.hiphopreview.kr.service;
 
 import io.github.haebin827.hiphopreview.kr.domain.Album;
+import io.github.haebin827.hiphopreview.kr.domain.Artist;
 import io.github.haebin827.hiphopreview.kr.domain.Review;
+import io.github.haebin827.hiphopreview.kr.domain.album.AlbumSecondaryType;
 import io.github.haebin827.hiphopreview.kr.dto.AlbumDTO;
+import io.github.haebin827.hiphopreview.kr.dto.AlbumSecondaryTypeDTO;
+import io.github.haebin827.hiphopreview.kr.dto.ArtistDTO;
 import io.github.haebin827.hiphopreview.kr.repository.AlbumRepository;
+import io.github.haebin827.hiphopreview.kr.repository.AlbumSecondaryTypeRepository;
+import io.github.haebin827.hiphopreview.kr.repository.ArtistRepository;
 import io.github.haebin827.hiphopreview.kr.repository.ReviewRepository;
+import io.github.haebin827.hiphopreview.kr.util.LocalUploader;
+import io.github.haebin827.hiphopreview.kr.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import java.text.DecimalFormat;
 import lombok.extern.log4j.Log4j2;
@@ -14,9 +22,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,91 +36,101 @@ import java.util.stream.Collectors;
 @Transactional
 public class AlbumServiceImpl implements AlbumService {
 
-    private final AlbumRepository ar;
-    private final ReviewRepository rr;
+    private final ArtistRepository artistRepo;
+    private final AlbumRepository albumRepo;
+    private final ReviewRepository reviewRepo;
+    private final AlbumSecondaryTypeRepository secondaryTypeRepo;
     private final ModelMapper mm;
+    private final LocalUploader localUploader;
+    private final S3Uploader s3Uploader;
 
     public List<AlbumDTO> getTop30NewestAlbums() {
 
         Pageable pageable = PageRequest.of(0, 30); // 30개 제한
-        List<Album> albums = ar.findTop30NewestAlbums(pageable);
+        List<Album> albums = albumRepo.findTop30NewestAlbums(pageable);
 
-        // Album 엔티티를 AlbumDTO로 매핑
         List<AlbumDTO> albumDTOs = albums.stream().map(album -> {
-            // 기본 필드는 ModelMapper로 매핑
             AlbumDTO albumDTO = mm.map(album, AlbumDTO.class);
-
-            // artistName과 artistUuid를 추가로 설정
-            if (album.getArtist() != null) {
-                albumDTO.setArtistId(album.getArtist().getId());
-                albumDTO.setArtistName(album.getArtist().getName());
-                albumDTO.setArtistUuid(album.getArtist().getUuid());
-                albumDTO.setArtistBornedIn(album.getArtist().getBornedIn());
-                albumDTO.setArtistCountry(album.getArtist().getCountry());
-                albumDTO.setArtistType(album.getArtist().getType());
-                albumDTO.setArtistTag(album.getArtist().getTags());
-            }
-
             return albumDTO;
         }).collect(Collectors.toList());
 
         return albumDTOs;
     }
 
-    public Page<AlbumDTO> getAlbums(String searchType, String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public void saveAlbum(AlbumDTO albumDTO) {
 
-        // 엔티티 페이지 조회
-        Page<Album> albumPage = null;
-        if (searchType != null && !searchType.isEmpty() && keyword != null && !keyword.isEmpty()) {
-            if(searchType.equals("album")) {
-                albumPage = ar.findByTitleContainingIgnoreCaseOrderByYearDesc(keyword, pageable);
-            } else if(searchType.equals("artist")) {
-                albumPage = ar.findByArtistNameContainingIgnoreCaseOrderByYearDesc(keyword, pageable);
-            }
-        } else {
-            albumPage = ar.findAllByOrderByYearDesc(pageable);
+        // s3로 이미지 업로드
+        String s3Url = null;
+        MultipartFile image = albumDTO.getImage();
+        String uuid = UUID.randomUUID().toString();
+
+        if (image != null && !image.isEmpty()) {
+            /*try {
+                String localFilePath = localUploader.uploadLocal(image, "album", uuid).get(0);
+                s3Url = s3Uploader.upload(localFilePath, "image");
+                log.info("S3URL: " + s3Url);
+            } catch (Exception e) {
+                throw new RuntimeException("AlbumServiceImpl: Failed to upload image to S3 - ", e);
+            }*/
         }
 
-        // 엔티티를 DTO로 변환하며 추가 작업 수행
+        Optional<Artist> optionalArtist = artistRepo.findByUuid(albumDTO.getArtistUuid());
+        optionalArtist.ifPresent(artist -> {
+            // Artist를 ArtistDTO로 변환
+            ArtistDTO artistDTO = mm.map(artist, ArtistDTO.class);
+            // albumDTO에 ArtistDTO 설정
+            albumDTO.setArtist(artistDTO);
+        });
+        // Album 엔터티 생성
+        albumDTO.setUuid(uuid);
+        albumDTO.setS3url(s3Url);
+        Album album = mm.map(albumDTO, Album.class);
+
+        log.info("Saved albumDTO: "  + albumDTO);
+        Album savedAlbum = albumRepo.save(album);
+        log.info("Saved album: " + savedAlbum);
+    }
+
+    public Page<AlbumDTO> getAlbums(String searchType, String keyword, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Album> albumPage = null;
+
+        if (searchType != null && !searchType.isEmpty() && keyword != null && !keyword.isEmpty()) {
+            if(searchType.equals("album")) {
+                albumPage = albumRepo.findByTitleContainingIgnoreCaseOrderByYearDesc(keyword, pageable);
+            } else if(searchType.equals("artist")) {
+                albumPage = albumRepo.findByArtistNameContainingIgnoreCaseOrderByYearDesc(keyword, pageable);
+            }
+        } else {
+            albumPage = albumRepo.findAllByOrderByYearDesc(pageable);
+        }
+
         return albumPage.map(album -> {
             AlbumDTO albumDTO = mm.map(album, AlbumDTO.class);
 
-            // Artist 관련 정보를 추가로 설정
             if (album.getArtist() != null) {
-                albumDTO.setArtistId(album.getArtist().getId());
-                albumDTO.setArtistName(album.getArtist().getName());
-                albumDTO.setArtistUuid(album.getArtist().getUuid());
-                albumDTO.setArtistBornedIn(album.getArtist().getBornedIn());
-                albumDTO.setArtistCountry(album.getArtist().getCountry());
-                albumDTO.setArtistType(album.getArtist().getType());
-                albumDTO.setArtistTag(album.getArtist().getTags());
+                ArtistDTO artistDTO = mm.map(album.getArtist(), ArtistDTO.class);
+                albumDTO.setArtist(artistDTO);
             }
-
             return albumDTO;
         });
+
     }
 
     public AlbumDTO getAlbumById(Integer id) {
-        Album album = ar.findById(id)
-                .orElse(null); // 앨범이 없으면 null 반환
+
+        Album album = albumRepo.findById(id).orElse(null);
 
         if (album == null) {
             return null;
         }
 
-        // Album -> AlbumDTO 매핑
         AlbumDTO albumDTO = mm.map(album, AlbumDTO.class);
 
-        // Artist 정보 추가
         if (album.getArtist() != null) {
-            albumDTO.setArtistId(album.getArtist().getId());
-            albumDTO.setArtistName(album.getArtist().getName());
-            albumDTO.setArtistUuid(album.getArtist().getUuid());
-            albumDTO.setArtistBornedIn(album.getArtist().getBornedIn());
-            albumDTO.setArtistCountry(album.getArtist().getCountry());
-            albumDTO.setArtistType(album.getArtist().getType());
-            albumDTO.setArtistTag(album.getArtist().getTags());
+            ArtistDTO artistDTO = mm.map(album.getArtist(), ArtistDTO.class);
+            albumDTO.setArtist(artistDTO);
         }
 
         return albumDTO;
@@ -117,12 +138,10 @@ public class AlbumServiceImpl implements AlbumService {
 
     public List<AlbumDTO> getAlbumsByArtist(Integer artistId) {
 
-        List<Album> albums = ar.findAllByArtistIdOrderByYearDesc(artistId);
+        List<Album> albums = albumRepo.findAllByArtistIdOrderByYearDesc(artistId);
 
-        // Album 엔티티를 AlbumDTO로 변환
         List<AlbumDTO> albumDTOs = albums.stream().map(album -> {
             AlbumDTO albumDTO = mm.map(album, AlbumDTO.class);
-
             return albumDTO;
         }).collect(Collectors.toList());
 
@@ -130,20 +149,16 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     public HashMap<String, String> getRatingsAndTotalReviews(Integer albumId) {
-        Album album = ar.findById(albumId).orElse(null);
 
-        // Album이 없으면 빈 HashMap 반환
+        Album album = albumRepo.findById(albumId).orElse(null);
+
         if (album == null) {
             return new HashMap<>();
         }
 
-        // Album에 연결된 리뷰 가져오기
         List<Review> reviews = album.getReviews();
-
-        // 리뷰 수 확인
         int reviewCount = reviews.size();
 
-        // 리뷰가 없는 경우
         if (reviewCount == 0) {
             HashMap<String, String> result = new HashMap<>();
             result.put("avgRating", "0.0");
@@ -177,7 +192,6 @@ public class AlbumServiceImpl implements AlbumService {
         DecimalFormat dfTwoDecimals = new DecimalFormat("0.0#"); // 평균 평점 소숫점 2자리
         DecimalFormat dfOneDecimal = new DecimalFormat("0.#");   // 나머지 소숫점 1자리
 
-        // 결과 HashMap에 저장
         HashMap<String, String> ratingsAndReviews = new HashMap<>();
         ratingsAndReviews.put("avgRating", dfTwoDecimals.format(averageRating)); // 소숫점 1~2자리로 포맷
         ratingsAndReviews.put("avgRatingCompletion", dfOneDecimal.format(averageRatingCompletion));
@@ -188,4 +202,15 @@ public class AlbumServiceImpl implements AlbumService {
         return ratingsAndReviews;
     }
 
+    public List<AlbumSecondaryTypeDTO> getSecondaryTypes() {
+
+        List<AlbumSecondaryType> secondaryTypes = secondaryTypeRepo.findAll();
+
+        List<AlbumSecondaryTypeDTO> secondaryTypeDTOs = secondaryTypes.stream().map(secondaryType -> {
+            AlbumSecondaryTypeDTO secondaryTypeDTO = mm.map(secondaryType, AlbumSecondaryTypeDTO.class);
+            return secondaryTypeDTO;
+        }).collect(Collectors.toList());
+
+        return secondaryTypeDTOs;
+    }
 }

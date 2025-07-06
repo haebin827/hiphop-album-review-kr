@@ -19,9 +19,13 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    // ---------------------------------
+    // category:
+    //
     // 1: 오류 리포트
     // 2: 기능 추가
     // 3: 기타
+    // ---------------------------------
     @Column
     private int category;
 

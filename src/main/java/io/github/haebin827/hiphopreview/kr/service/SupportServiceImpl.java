@@ -11,9 +11,13 @@ import io.github.haebin827.hiphopreview.kr.util.LocalUploader;
 import io.github.haebin827.hiphopreview.kr.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Log4j2
@@ -21,26 +25,25 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class SupportServiceImpl implements SupportService{
 
-    private final FeedbackRepository fr;
-    private final ArtistRequestRepository ar;
-    private final UserRepository ur;
+    private final FeedbackRepository feedbackRepo;
+    private final ArtistRequestRepository artistReqRepo;
+    private final UserRepository userRepo;
+    private final ModelMapper mm;
     private final LocalUploader localUploader;
     private final S3Uploader s3Uploader;
 
     public void saveFeedback(FeedbackDTO feedbackDTO, Integer userId) {
-        // User 엔티티 조회
-        User user = ur.findById(userId)
+
+        User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        // Feedback 엔터티 생성
         Feedback feedback = Feedback.builder()
                 .category(feedbackDTO.getCategory())
                 .content(feedbackDTO.getContent())
-                .user(user) // User 설정
+                .user(user)
                 .build();
 
-        // 피드백 저장
-        Feedback savedFeedback = fr.save(feedback);
+        Feedback savedFeedback = feedbackRepo.save(feedback);
         log.info("Saved feedback: " + savedFeedback);
     }
 
@@ -49,10 +52,11 @@ public class SupportServiceImpl implements SupportService{
         // s3로 이미지 업로드
         String s3Url = null;
         MultipartFile image = artistRequestDTO.getImage();
+        String uuid = UUID.randomUUID().toString();
 
         if (image != null && !image.isEmpty()) {
             try {
-                String localFilePath = localUploader.uploadLocal(image, "artistrequest").get(0);
+                String localFilePath = localUploader.uploadLocal(image, "artistrequest", uuid).get(0);
                 s3Url = s3Uploader.upload(localFilePath, "image");
                 log.info("S3URL: " + s3Url);
             } catch (Exception e) {
@@ -60,25 +64,15 @@ public class SupportServiceImpl implements SupportService{
             }
         }
 
-        // User 엔티티 조회
-        User user = ur.findById(userId)
+        User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        // Feedback 엔터티 생성
-        ArtistRequest artistRequest = ArtistRequest.builder()
-                .name(artistRequestDTO.getName())
-                .type(artistRequestDTO.getType())
-                .gender(artistRequestDTO.getGender())
-                .bornedIn(artistRequestDTO.getBornedIn())
-                .country(artistRequestDTO.getCountry())
-                .tags(artistRequestDTO.getTags())
-                .note(artistRequestDTO.getNote())
-                .s3url(s3Url)
-                .user(user)
-                .build();
+        artistRequestDTO.setUuid(uuid);
+        artistRequestDTO.setS3url(s3Url);
+        artistRequestDTO.setUser(user);
 
-        // 피드백 저장
-        ArtistRequest savedArtistRequest = ar.save(artistRequest);
-        log.info("Saved feedback: " + savedArtistRequest);
+        ArtistRequest artistRequest = mm.map(artistRequestDTO, ArtistRequest.class);
+        ArtistRequest savedArtistRequest = artistReqRepo.save(artistRequest);
+        log.info("Saved ArtistRequest: " + savedArtistRequest);
     }
 }

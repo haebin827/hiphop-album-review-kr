@@ -10,11 +10,11 @@
         <form th:action="@{/album/list}" method="get" class="d-flex align-items-center" style="height: 2.5rem;">
             <div class="input-group" style="height: 100%;">
                 <!-- Select 요소 -->
-                <select name="searchType" class="form-select form-select-sm" style="width: 120px; margin-right: 5px;">
-                    <option value="" th:selected="${searchType == ''}">--- 선택 ---</option>
-                    <option value="artist" th:selected="${searchType == 'artist'}">아티스트명</option>
+                <select name="searchType" class="form-select form-select-sm" style="width: 120px;">
                     <option value="album" th:selected="${searchType == 'album'}">앨범명</option>
+                    <option value="artist" th:selected="${searchType == 'artist'}">아티스트명</option>
                 </select>
+
 
                 <!-- 검색창 -->
                 <input type="text" name="keyword" th:value="${keyword}" placeholder="Search"
@@ -50,7 +50,7 @@
                 </a>
                 <div class="card-body p-2">
                     <!-- Artist Name -->
-                    <p class="text-muted mb-1" style="font-size: 0.8rem; line-height: 1.2;" th:text="${album.artistName}"></p>
+                    <p class="text-muted mb-1" style="font-size: 0.8rem; line-height: 1.2;" th:text="${album.artist.name}"></p>
                     <!-- Album Title -->
                     <h6 class="card-title mb-1" style="font-size: 0.95rem; line-height: 1.2;">
                         <a th:href="@{/album/info(id=${album.id})}" th:text="${album.title}" style="text-decoration: none; color: inherit;"></a>
@@ -68,7 +68,7 @@
                 <!-- 이전 페이지 -->
                 <li class="page-item" th:classappend="${currentGroupStart == 0} ? 'disabled'">
                     <a class="page-link" th:if="${currentPage > 0}"
-                       th:href="@{/album/list(page=${currentGroupStart - 1}, keyword=${keyword})}">이전</a>
+                       th:href="@{/album/list(page=${currentGroupStart - 1}, searchType=${searchType}, keyword=${keyword})}">이전</a>
                     <span class="page-link" th:if="${currentPage == 0}">이전</span>
                 </li>
 
@@ -77,13 +77,13 @@
                     th:each="pageNum, iterStat : ${totalPages > 0 ? #numbers.sequence(currentGroupStart, currentGroupEnd) : #numbers.sequence(currentPage, currentPage)}"
                     th:classappend="${pageNum == currentPage} ? 'active'">
                     <a class="page-link"
-                       th:href="@{/album/list(page=${pageNum}, keyword=${keyword})}"
+                       th:href="@{/album/list(page=${pageNum}, searchType=${searchType}, keyword=${keyword})}"
                        th:text="${pageNum + 1}"></a>
                 </li>
 
                 <!-- 다음 페이지 -->
                 <li class="page-item" th:classappend="${currentGroupEnd + 1 >= totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{/album/list(page=${currentGroupEnd + 1}, keyword=${keyword})}">다음</a>
+                    <a class="page-link" th:href="@{/album/list(page=${currentGroupEnd + 1}, searchType=${searchType}, keyword=${keyword})}">다음</a>
                 </li>
             </ul>
         </nav>

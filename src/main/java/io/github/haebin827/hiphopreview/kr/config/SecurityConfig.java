@@ -33,10 +33,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(authorize -> authorize
                         // 관리자(admin) 권한 필요
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/announce/new", "/announce/edit/**", "/announce/delete/**").hasRole("ADMIN")
 
                         // 사용자(user) & 관리자(admin) 권한 필요
-                        .requestMatchers("/support/album-request", "/support/artist-request", "/support/feedback", "/profile/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/support/album-request", "/support/artist-request", "/support/feedback", "/profile/**", "/album/review/new").hasAnyRole("ADMIN", "USER")
 
                         // 인증된 사용자만 접근 가능
                         .requestMatchers("/auth/findInfo").authenticated()
@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(
                                 (request, response, authException) -> {
-                                    // /auth/findInfo에 대한 403 Forbidden 응답
+                                    // /auth/findInfo에 대한 403 Forbidden
                                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                                     response.getWriter().write("Access Denied: You are not allowed to access this resource.");
                                 },
@@ -92,9 +92,9 @@ public class SecurityConfig {
                         .maxSessionsPreventsLogin(false) // 기존 세션 만료 없이 새로운 로그인 차단 => 로그아웃 후 세션이 올바르게 해제되지 않으면, 동일한 세션 충돌로 인해 로그인 오류가 발생
                 )
                 /*.rememberMe(remember -> remember
-                        .key("uniqueAndSecret") // 쿠키 암호화를 위한 키
-                        .rememberMeParameter("remember-me") // HTML 폼에서 사용할 파라미터 이름
-                        .tokenValiditySeconds(7 * 24 * 60 * 60) // 쿠키 유지 기간 (7일)
+                        .key("uniqueAndSecret")
+                        .rememberMeParameter("remember-me")
+                        .tokenValiditySeconds(7 * 24 * 60 * 60)
                 )*/;
 
         return http.build();

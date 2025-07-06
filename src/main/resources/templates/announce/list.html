@@ -96,7 +96,9 @@
             </form>
 
             <!-- 글쓰기 버튼 -->
-            <a th:href="@{/announce/new}" class="btn btn-outline-primary ms-2">글 쓰기</a></div>
+            <div th:if="${isAdmin}">
+                <a th:href="@{/announce/new}" class="btn btn-outline-primary ms-2">글 쓰기</a></div>
+            </div>
 
         <!-- 페이지네이션 -->
         <nav>

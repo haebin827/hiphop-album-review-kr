@@ -7,7 +7,12 @@ import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +33,23 @@ public class AlbumRepositoryTest {
                 .rating(4.5f)
                 .build();
         albumRepo.save(album);
+    }
+
+    @Test
+    @Transactional
+    public void testFindTop30ByOrderByRegdateDesc() {
+        Pageable pageable = PageRequest.of(0, 30); // 30개 제한
+        List<Album> top30 = albumRepo.findTop30NewestAlbums(pageable);
+        top30.forEach(album -> log.info("- " + album));
+    }
+
+    @Test
+    @Transactional
+    public void testFindByTitleContainingIgnoreCase() {
+        Page<Album> albums = albumRepo.findByTitleContainingIgnoreCase("man", PageRequest.of(0, 30));
+        for(Album album : albums) {
+            log.info("TEST- " + album);
+        }
     }
 
     /*@Test

@@ -24,7 +24,7 @@
                 </label>
                 <div class="col-md-9">
                     <input id="artistName" name="name" type="text" class="form-control" placeholder="아티스트 명을 입력하세요." required />
-                    <div class="invalid-feedback">아티스트 이름을 입력하세요.</div>
+                    <!--<div class="invalid-feedback">아티스트 이름을 입력하세요.</div>-->
                 </div>
             </div>
 
@@ -72,21 +72,19 @@
                     국가 <span style="color: red;">*</span>:
                 </label>
                 <div class="col-md-9 d-flex align-items-center">
-                    <select id="country" name="country" class="form-select" style="width: 40%;" required>
+                    <select id="country" name="country" class="form-select" style="width: 40%;" onchange="handleCountryChange()" required>
                         <option value="">-- 선택하세요 --</option>
-                        <option value="KR">대한민국</option>
-                        <option value="US">미국</option>
-                        <option value="GB">영국</option>
-                        <option value="CA">캐나다</option>
-                        <option value="AU">호주</option>
-                        <option value="DE">독일</option>
-                        <option value="FR">프랑스</option>
-                        <option value="JP">일본</option>
-                        <option value="CN">중국</option>
+                        <!-- countries 반복 -->
+                        <option th:each="country : ${countries}" th:value="${country.country}" th:text="${country.country}">
+                        </option>
+                        <option value="other">❌그 외 국가</option>
                     </select>
-                    <div class="invalid-feedback">국가를 선택하세요.</div>
+                    <!-- 동적으로 표시될 입력 필드 -->
+                    <input type="text" id="otherCountryInput" name="otherCountry" class="form-control ms-3"
+                           placeholder="국가를 입력하세요" style="display: none; width: 40%;">
                 </div>
             </div>
+
 
             <!-- 생년월일 -->
             <div class="row mb-4 align-items-center">
@@ -115,6 +113,20 @@
                 </div>
             </div>
 
+            <!-- 아티스트 사진 -->
+            <div class="row mb-4 align-items-center">
+                <label for="artistPhoto" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    아티스트 사진 <span style="color: red;">*</span>:
+                </label>
+                <div class="col-md-9 d-flex align-items-center">
+                    <input id="artistPhoto" name="image" type="file" class="form-control" accept="image/*" onchange="limitFileUpload(this)" required/>
+                    <button type="button" class="btn btn-dark btn-sm ms-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover"
+                            data-bs-content="최대한 잘 나온 사진으로 올려주세요!">
+                        ?
+                    </button>
+                </div>
+            </div>
+
             <!-- 태그 -->
             <div class="row mb-4 align-items-center">
                 <label for="tags" class="col-md-3 col-form-label text-md-end font-weight-bold">
@@ -123,23 +135,29 @@
                 <div class="col-md-9 d-flex align-items-center">
                     <input id="tags" name="tags" type="text" class="form-control" placeholder="태그를 입력하세요." />
                     <button type="button" class="btn btn-dark btn-sm ms-2" tabindex="0" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover"
-                            data-bs-content="태그는 아티스트를 나타내는 키워드입니다.<br>:를 기준으로 나눠주세요.<br>(ex. 붐뱁:컨셔스 랩:올해의 아티스트 수상)">
+                            data-bs-content="태그는 아티스트를 나타내는 키워드입니다.<br>,를 기준으로 나눠주세요.<br>(ex. 붐뱁,컨셔스 랩,올해의 아티스트 수상)">
                         ?
                     </button>
                 </div>
             </div>
 
-            <!-- 아티스트 사진 -->
+            <!-- 인스타그램 아이디 -->
             <div class="row mb-4 align-items-center">
-                <label for="artistPhoto" class="col-md-3 col-form-label text-md-end font-weight-bold">
-                    아티스트 사진:
+                <label for="instaId" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    인스타그램 ID:
                 </label>
-                <div class="col-md-9 d-flex align-items-center">
-                    <input id="artistPhoto" name="image" type="file" class="form-control" accept="image/*" onchange="limitFileUpload(this)" />
-                    <button type="button" class="btn btn-dark btn-sm ms-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover"
-                            data-bs-content="최대한 잘 나온 사진으로 올려주세요!">
-                        ?
-                    </button>
+                <div class="col-md-9">
+                    <input id="instaId" name="instaId" type="text" class="form-control" placeholder="인스타그램 ID를 입력하세요.">
+                </div>
+            </div>
+
+            <!-- 트위터 아이디 -->
+            <div class="row mb-4 align-items-center">
+                <label for="twitterId" class="col-md-3 col-form-label text-md-end font-weight-bold">
+                    트위터 ID:
+                </label>
+                <div class="col-md-9">
+                    <input id="twitterId" name="twitterId" type="text" class="form-control" placeholder="트위터 ID를 입력하세요.">
                 </div>
             </div>
 
@@ -163,9 +181,48 @@
             </div>
         </form>
     </div>
+
+    <!-- 신청 완료 Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center" style="line-height: 1.7; padding: 20px; margin-bottom: 0px;">
+                    제출하신 아티스트 정보가 신청 완료되었습니다.<br>
+                    관리자 검토 후 업로드되며, 현황은 <br><strong>마이페이지 &gt; 아티스트 신청목록</strong>에서 확인하실 수 있습니다.
+                </div>
+                <div class="modal-footer" style="justify-content: center; padding-top: 0;">
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: black; color: white; border-radius: 0; padding: 8px 18px;">
+                        닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
+
+    var result = /*[[${success}]]*/ false;
+    if (result) {
+        var modal = new bootstrap.Modal(document.querySelector("#successModal"));
+        modal.show();
+    }
+
+    function handleCountryChange() {
+        const countrySelect = document.getElementById('country');
+        const otherCountryInput = document.getElementById('otherCountryInput');
+
+        // "그 외 국가"가 선택되었는지 확인
+        if (countrySelect.value === 'other') {
+            otherCountryInput.style.display = 'block';
+            otherCountryInput.required = true; // 필수 입력 설정
+        } else {
+            otherCountryInput.style.display = 'none';
+            otherCountryInput.required = false; // 필수 입력 해제
+            otherCountryInput.value = ''; // 입력값 초기화
+        }
+    }
 
     function limitFileUpload(input) {
         if (input.files.length > 1) {
@@ -195,9 +252,31 @@
     function validateAndSubmitForm() {
         const form = document.getElementById('artistForm');
         const typeIndividual = document.getElementById('typeIndividual').checked;
+        const countrySelect = document.getElementById('country');
+        const otherCountryInput = document.getElementById('otherCountryInput');
 
         // 성별 필드에 대해 조건에 따라 required 설정
         toggleGender(typeIndividual);
+
+        // "그 외 국가"가 선택된 경우 입력값을 country 필드로 설정
+        if (countrySelect.value === 'other') {
+            if (otherCountryInput.value.trim() === '') {
+                // 유효성 검사 실패 시 경고 표시
+                alert('국가를 입력해주세요.');
+                otherCountryInput.focus();
+                return;
+            }
+
+            // 입력한 값을 폼 데이터로 포함시키기 위해 히든 필드로 추가
+            const customCountryInput = document.createElement('input');
+            customCountryInput.type = 'hidden';
+            customCountryInput.name = 'country';
+            customCountryInput.value = otherCountryInput.value.trim();
+            form.appendChild(customCountryInput);
+
+            // 기존 `country` select의 값을 제거하거나 무효화
+            countrySelect.name = ''; // 전송되지 않도록 설정
+        }
 
         if (!form.checkValidity()) {
             form.classList.add('was-validated');
@@ -215,6 +294,16 @@
         const birthMonth = document.getElementById('birthMonth').value;
         const birthDay = document.getElementById('birthDay').value;
         const bornedIn = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+
+        const birthYearNumber = parseInt(birthYear, 10);
+        const birthLabelText = typeIndividual ? "생년월일" : "활동 시작일";
+
+        // 생년월일/활동 시작일 유효성 검사
+        if (isNaN(birthYearNumber) || birthYearNumber < 1500 || birthYear.length !== 4) {
+            alert(`올바른 ${birthLabelText}을 입력해주세요.`);
+            document.getElementById('birthYear').focus();
+            return;
+        }
 
         const confirmation = confirm("모든 내용이 정확합니까?");
         if (confirmation) {

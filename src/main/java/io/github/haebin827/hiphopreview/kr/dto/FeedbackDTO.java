@@ -17,13 +17,6 @@ import java.time.LocalDateTime;
 public class FeedbackDTO {
     private Integer id;
 
-    //@NotEmpty(message = "제목은 필수 입력 항목입니다.")
-    //@Size(min = 1, max = 50, message = "제목은 최대 50자 이하여야 합니다")
-    //private String title;
-
-    // 1: 오류 리포트
-    // 2: 기능 추가
-    // 3: 기타
     @NotNull(message = "분류는 필수 입력 항목입니다.")
     private int category;
 

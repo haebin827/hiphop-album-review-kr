@@ -14,6 +14,27 @@ build/
 ### Security ###
 application-aws.properties
 application.properties
+application-dev.properties
+application-prod.properties
+*.properties
+!gradle.properties
+
+### Logs ###
+*.log
+/logs/
+log/
+
+### Upload Directories ###
+/upload/
+
+### Build and Compiled files ###
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
 
 ### STS ###
 .apt_generated
@@ -45,3 +66,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### OS Generated Files ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

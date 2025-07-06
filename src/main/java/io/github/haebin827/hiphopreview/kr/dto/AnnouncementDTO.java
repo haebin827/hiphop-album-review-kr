@@ -21,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnnouncementDTO {
+
     private Integer id;
 
     @NotEmpty(message = "제목은 필수 입력 항목입니다.")

@@ -1,11 +1,10 @@
 package io.github.haebin827.hiphopreview.kr.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,10 @@ public class Artist {
     private String tags;
 
     @Column
-    private String image;
+    private String instaId;
+
+    @Column
+    private String twitterId;
 
     @Column
     private String s3url;
@@ -55,6 +57,7 @@ public class Artist {
     private LocalDateTime regDate;
 
     @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<Album> albums = new ArrayList<>();
 

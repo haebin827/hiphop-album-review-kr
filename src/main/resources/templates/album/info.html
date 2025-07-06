@@ -3,40 +3,40 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base.html}">
 
-<div layout:fragment="content" class="col-11 mx-auto" style="margin-top: 70px; margin-bottom: 80px;">
+<div layout:fragment="content" class="col-10 mx-auto" style="margin-top: 70px; margin-bottom: 80px;">
     <div class="card">
         <div class="d-flex justify-content-between align-items-start" style="gap: 20px;">
 
             <!-- 앨범 이미지 -->
             <div class="album-photo" style="width: 21%; padding: 0;">
                 <img th:src="${album.s3url}" class="img-fluid" alt="Album Cover"
-                     style="object-fit: cover; width: 100%; height: auto; border-radius: 8px; box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);">
+                     style="object-fit: cover; width: auto; height: 100%; border-radius: 8px; box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);">
             </div>
 
             <!-- 앨범 정보 -->
-            <div class="album-info" style="width: 50%; position: relative; padding: 0; margin-top: 13px;">
+            <div class="album-info" style="width: 50%; position: relative; padding: 0; margin-top: -5px;">
                 <div class="card-body" style="padding-left: 5px; text-align: left;">
                     <!-- 앨범 제목 -->
                     <h3 class="card-title mb-3" th:text="${album.title}"
                         style="font-size: 2.05rem; font-weight: bold; margin: 0;"></h3>
                     <!-- 가수 이름 -->
                     <p class="card-text mb-2">
-                        <a th:href="@{/artist/info=(id=${album.artistId})}"
+                        <a th:href="@{/artist/info(id=${album.artist.id})}"
                            style="font-size: 1.1rem; color: inherit; text-decoration: none;"
-                           th:text="${album.artistName}"></a>
+                           th:text="${album.artist.name}"></a>
                     </p>
                     <!-- 발매일 -->
                     <p class="card-text" th:text="${album.year}"
                        style="font-size: 1rem; color: gray; margin: 0 0 10px 0;"></p>
                     <!-- 유튜브 및 사운드클라우드 링크 -->
                     <p class="card-text" style="margin: 0; white-space: nowrap;">
-                        <a th:if="${album.youtubeUrl != null}" th:href="${album.youtubeUrl}" target="_blank" style="color: red; font-size: 1.5rem; margin-right: 10px;"><i class="fab fa-youtube"></i></a>
-                        <a th:if="${album.soundcloudUrl != null}" th:href="${album.soundcloudUrl}" target="_blank" style="color: orange; font-size: 1.5rem;"><i class="fab fa-soundcloud"></i></a>
+                        <a th:if="${album.youtubeUrl != null and !album.youtubeUrl.isEmpty()}" th:href="${album.youtubeUrl}" target="_blank" style="color: red; font-size: 1.5rem; margin-right: 10px;"><i class="fab fa-youtube"></i></a>
+                        <a th:if="${album.soundcloudUrl != null and !album.soundcloudUrl.isEmpty()}" th:href="${album.soundcloudUrl}" target="_blank" style="color: orange; font-size: 1.5rem;"><i class="fab fa-soundcloud"></i></a>
                     </p>
                 </div>
 
                 <!-- 평균 별점과 리뷰 수 -->
-                <div style="position: absolute; top: 225px; left: 10px; font-size: 2rem; font-weight: bold; color: black;">
+                <div style="position: absolute; top: 220px; left: 10px; font-size: 2rem; font-weight: bold; color: black;">
                     <!-- 평균 별점 출력 -->
                     <span th:text="${ratingsAndTotalReviews['avgRating']}"></span>
                     <!-- 별 아이콘 조건부 출력 -->
@@ -65,7 +65,7 @@
                 <!-- 리뷰 쓰기 버튼 -->
                 <a th:href="${hasReviewed} ? @{/album/info(id=${album.id}, sort='my')} : @{/album/review/new(id=${album.id})}"
                    th:classappend="${hasReviewed} ? 'btn btn-outline-success' : 'btn btn-outline-primary'"
-                   style="position: sticky; margin-left: 170px; margin-top: 130px; font-size: 1.5rem; padding: 15px 25px; text-decoration: none; border-radius: 15px; z-index: 1000;"
+                   style="position: sticky; margin-left: 140px; margin-top: 110px; font-size: 1.5rem; padding: 15px 25px; text-decoration: none; border-radius: 15px; z-index: 1000;"
                    th:text="${hasReviewed} ? '내 리뷰보기' : '리뷰 쓰기'"></a>
 
             </div>
@@ -109,7 +109,7 @@
                 <!-- 리뷰 리스트 -->
                 <ul class="list-group" th:if="${#lists.size(reviews) > 0}" style="border: none;">
                     <li class="list-group-item" th:each="review : ${reviews}"
-                        style="margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); padding: 20px;">
+                        style="margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); padding: 20px 40px 40px 20px;">
                         <div class="d-flex" style="gap: 10px;">
                             <!-- 작은 앨범 이미지 -->
                             <div style="flex-shrink: 0;">
@@ -154,7 +154,7 @@
 
                                 <!-- 타이틀과 리뷰 내용을 아래로 배치 -->
                                 <div style="margin-top: 15px;">
-                                    <p th:text="${review.title}" style="margin-bottom: 13px; font-size: 1.1rem; font-weight: bold;"></p>
+                                    <p th:text="${review.title}" style="margin-bottom: 15px; font-size: 1.1rem; font-weight: bold;"></p>
                                     <p th:text="${review.content}" style="font-size: 0.9rem; margin: 0; white-space: pre-wrap;"></p>
                                 </div>
                             </div>
@@ -263,12 +263,11 @@
                     </div>
                 </div>
 
-
                 <!-- 카드 타이틀 -->
                 <div class="card" style="border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05); padding: 20px;">
                     <div class="card-header text-center mb-2" style="font-size: 0.9rem; font-weight: bold;">
                         <i class="fas fa-compact-disc" style="color: black; margin-right: 8px;"></i>
-                        <span th:text="${album.artistName} + ' 의 다른 앨범'"></span>
+                        <span th:text="${album.artist.name} + ' 의 다른 앨범'"></span>
                     </div>
                     <div class="card-body" style="max-height: 500px; overflow-y: auto;">
                         <div class="row">

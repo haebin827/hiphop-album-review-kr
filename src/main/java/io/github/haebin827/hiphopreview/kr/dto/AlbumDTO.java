@@ -1,6 +1,6 @@
 package io.github.haebin827.hiphopreview.kr.dto;
 
-import jakarta.persistence.Column;
+import io.github.haebin827.hiphopreview.kr.domain.Artist;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,30 +15,34 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlbumDTO {
+
     private Integer id;
 
     @NotEmpty(message = "앨범/EP 명은 필수 입력 항목입니다.")
     private String title;
 
-    @NotEmpty(message = "아티스트 명은 필수 입력 항목입니다.")
-    private String artistName;
+    private String artistUuid;
 
-    //private List<ArtistDTO> artists;
+    private ArtistDTO artist;
+
     @NotEmpty(message = "구분은 필수 입력 항목입니다.")
     private String primaryType;
 
     private String secondaryType;
 
-    @Size(min = 4, max = 8)
+    @Pattern(
+            regexp = "^(1[0-9]{3}|[2-9][0-9]{3})$|^(1[0-9]{3}|[2-9][0-9]{3})-\\d{2}-\\d{2}$",
+            message = "발매일은 'xxxx' 또는 'xxxx-xx-xx' 형식으로 입력해야 합니다."
+    )
     private String year;
 
-    private String artistUuid;
+    private String youtubeUrl;
 
-    @Min(0)
-    @Max(5)
-    private float rating;
+    private String soundcloudUrl;
 
-    private String link;
+    private String uuid;
+
+    private String s3url;
 
     private MultipartFile image;
 

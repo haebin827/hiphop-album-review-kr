@@ -1,6 +1,7 @@
 package io.github.haebin827.hiphopreview.kr.service;
 
 import io.github.haebin827.hiphopreview.kr.dto.AlbumDTO;
+import io.github.haebin827.hiphopreview.kr.dto.AlbumSecondaryTypeDTO;
 import io.github.haebin827.hiphopreview.kr.dto.AnnouncementDTO;
 import org.springframework.data.domain.Page;
 
@@ -14,4 +15,6 @@ public interface AlbumService {
     AlbumDTO getAlbumById(Integer id);
     List<AlbumDTO> getAlbumsByArtist(Integer artistId);
     HashMap<String, String> getRatingsAndTotalReviews(Integer albumId);
+    void saveAlbum(AlbumDTO albumDTO);
+    List<AlbumSecondaryTypeDTO> getSecondaryTypes();
 }

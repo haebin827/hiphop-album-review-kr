@@ -10,11 +10,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
 
-    // 제목 검색 (페이징 포함)
+    // 제목 검색
     Page<Announcement> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
     // 상단 고정 공지사항 (검색 시 사용하지 않음)
@@ -26,6 +25,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
     @Modifying
     @Transactional
     @Query("UPDATE Announcement a SET a.views = a.views + 1 WHERE a.id = :id")
-    void incrementViews(Integer id);
+    void incrementViews(@Param("id") Integer id);
 
 }

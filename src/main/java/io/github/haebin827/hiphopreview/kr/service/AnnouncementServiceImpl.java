@@ -5,6 +5,7 @@ import io.github.haebin827.hiphopreview.kr.dto.AnnouncementDTO;
 import io.github.haebin827.hiphopreview.kr.repository.AnnouncementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,31 +22,41 @@ import java.util.List;
 @Transactional
 public class AnnouncementServiceImpl implements AnnouncementService {
 
-    private final AnnouncementRepository ar;
+    private final AnnouncementRepository announceRepo;
+    private final ModelMapper mm;
 
     public void saveAnnouncement(AnnouncementDTO announcementDTO) {
+
         Announcement announcement = Announcement.builder()
                 .title(announcementDTO.getTitle())
                 .content(announcementDTO.getContent())
                 .isImp(announcementDTO.getIsImp())
                 .build();
 
-        ar.save(announcement);
+        announceRepo.save(announcement);
     }
 
-    // 검색 및 목록 조회
-    public Page<Announcement> getAnnouncements(String keyword, int page, int size) {
+    public Page<AnnouncementDTO> getAnnouncements(String keyword, int page, int size) {
+
         Pageable pageable = PageRequest.of(page, size);
+        Page<Announcement> announcementPage;
+
         if (keyword != null && !keyword.isEmpty()) {
-            // 제목 검색
-            return ar.findByTitleContainingIgnoreCase(keyword, pageable);
+            announcementPage = announceRepo.findByTitleContainingIgnoreCase(keyword, pageable);
+        } else {
+            announcementPage = announceRepo.findByIsImpFalseOrderByRegDateDesc(pageable);
         }
-        // 전체 목록 조회 (isImp 기준)
-        return ar.findByIsImpFalseOrderByRegDateDesc(pageable);
+
+        return announcementPage.map(announcement -> mm.map(announcement, AnnouncementDTO.class));
     }
 
-    public List<Announcement> getImportantAnnouncements() {
-        return ar.findByIsImpTrueOrderByRegDateDesc();
+    public List<AnnouncementDTO> getImportantAnnouncements() {
+
+        List<Announcement> importantAnnouncements = announceRepo.findByIsImpTrueOrderByRegDateDesc();
+
+        return importantAnnouncements.stream()
+                .map(announcement -> mm.map(announcement, AnnouncementDTO.class))
+                .toList(); // Java 16 이상 사용 시 toList(), 그렇지 않으면 Collectors.toList() 사용
     }
 
     /*public Page<Announcement> getGeneralAnnouncements(int page, int size) {
@@ -53,27 +64,33 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return ar.findByIsImpFalseOrderByRegDateDesc(pageable);
     }*/
 
-    public Announcement getAnnouncement(Integer id) {
-        return ar.findById(id).orElse(null);
+    public AnnouncementDTO getAnnouncement(Integer id) {
+
+        return announceRepo.findById(id)
+                .map(announcement -> mm.map(announcement, AnnouncementDTO.class))
+                .orElse(null);
     }
 
     public void incrementViews(Integer id) {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getAuthorities().stream()
                 .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
             // ADMIN이 아닌 경우 조회수 증가
-            ar.incrementViews(id);
+            announceRepo.incrementViews(id);
         }
     }
 
     public void deleteAnnouncement(Integer id) {
-        ar.deleteById(id);
+        announceRepo.deleteById(id);
     }
 
     public void updateAnnouncement(AnnouncementDTO announcementDTO) {
-        Announcement announcement = ar.findById(announcementDTO.getId())
+
+        Announcement announcement = announceRepo.findById(announcementDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid announcement ID"));
         announcement.change(announcementDTO.getTitle(), announcementDTO.getContent(), announcementDTO.getIsImp());
-        ar.save(announcement);
+
+        announceRepo.save(announcement);
     }
 }

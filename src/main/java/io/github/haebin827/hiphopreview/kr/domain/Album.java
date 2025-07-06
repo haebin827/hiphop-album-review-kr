@@ -97,6 +97,7 @@ public class Album {
     @ToString.Exclude
     private List<Artist> artists = new ArrayList<>();*/
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "artist_id", referencedColumnName = "uuid")
     private Artist artist;
@@ -110,8 +111,8 @@ public class Album {
     @Column
     private String year;
 
-    //@Column
-    //private float rating;
+    @Column
+    private float rating;
 
     //@Column
     //private int tracks;

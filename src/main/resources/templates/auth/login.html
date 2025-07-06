@@ -34,12 +34,20 @@
         .auth-links a:hover {
             text-decoration: underline;
         }
+
+        /* 화면 중앙 정렬 */
+        .centered-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh; /* 화면 전체 높이 */
+        }
     </style>
 </head>
 
-<div layout:fragment="content" class="col-9 mx-auto" style="text-align: center; margin-top: 120px; margin-bottom: 200px;">
+<div layout:fragment="content" class="centered-container" style="text-align: center;">
 
-    <form th:action="@{/auth/login}" method="post" style="width:30%;margin:80px auto;">
+    <form th:action="@{/auth/login}" method="post" style="width:18%;">
 
         <!-- Email input -->
         <div data-mdb-input-init class="form-outline mb-4">

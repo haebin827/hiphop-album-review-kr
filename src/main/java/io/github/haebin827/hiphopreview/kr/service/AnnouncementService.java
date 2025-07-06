@@ -9,9 +9,9 @@ import java.util.List;
 public interface AnnouncementService {
 
     void saveAnnouncement(AnnouncementDTO announcementDTO);
-    Announcement getAnnouncement(Integer id);
-    Page<Announcement> getAnnouncements(String keyword, int page, int size);
-    List<Announcement> getImportantAnnouncements();
+    AnnouncementDTO getAnnouncement(Integer id);
+    Page<AnnouncementDTO> getAnnouncements(String keyword, int page, int size);
+    List<AnnouncementDTO> getImportantAnnouncements();
     //Page<Announcement> getGeneralAnnouncements(int page, int size);
     void incrementViews(Integer id);
     void deleteAnnouncement(Integer id);

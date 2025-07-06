@@ -66,7 +66,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<AlbumRequest> albumRequests;
 
-    @ManyToMany(fetch = FetchType.EAGER) // 즉시 로딩
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

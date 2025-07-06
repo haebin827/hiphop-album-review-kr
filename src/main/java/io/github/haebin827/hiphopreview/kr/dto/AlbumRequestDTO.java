@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlbumRequestDTO {
+
     private Integer id;
 
     @NotNull

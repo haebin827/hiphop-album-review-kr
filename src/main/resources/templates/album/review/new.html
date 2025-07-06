@@ -80,6 +80,21 @@
         .rating > input:checked ~ label:hover ~ label {
             color: #f4c921; /* 선택된 별 호버 색상 */
         }
+
+        .sub-rating input[type="number"] {
+            border: 1px solid #ccc; /* 회색 테두리 */
+            border-radius: 8px; /* 둥근 모서리 */
+            padding: 5px; /* 내부 여백 */
+            width: 60px; /* 숫자 입력칸 크기 */
+            text-align: center;
+            outline: none; /* 포커스 시 기본 아웃라인 제거 */
+            box-shadow: none; /* 기본 그림자 제거 */
+            transition: border-color 0.3s ease; /* 테두리 색상 변화 효과 */
+        }
+
+        .sub-rating input[type="number"]:focus {
+            border-color: #f4c921; /* 포커스 시 테두리 색상 */
+        }
     </style>
 
 </head>
@@ -133,19 +148,19 @@
             <!-- 음악적 완성도 -->
             <div class="sub-rating text-center">
                 <h6>음악적 완성도</h6>
-                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingCompletion" id="ratingCompletion" class="text-center" style="width: 50px; margin: 0 auto;">
+                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingCompletion" id="ratingCompletion">
                 <span id="ratingCompletionValue"> / 5 ⭐</span>
             </div>
             <!-- 트랙 간 유기성 -->
             <div class="sub-rating text-center">
                 <h6>트랙 간 유기성</h6>
-                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingCohesion" id="ratingCohesion" class="text-center" style="width: 50px; margin: 0 auto;">
+                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingCohesion" id="ratingCohesion">
                 <span id="ratingCohesionValue"> / 5 ⭐</span>
             </div>
             <!-- 재청취 욕구 -->
             <div class="sub-rating text-center">
                 <h6>재청취 욕구</h6>
-                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingReplayability" id="ratingReplayability" class="text-center" style="width: 50px; margin: 0 auto;">
+                <input type="number" min="0" max="5" step="0.5" value="0" name="ratingReplayability" id="ratingReplayability">
                 <span id="ratingReplayabilityValue"> / 5 ⭐</span>
             </div>
         </div>

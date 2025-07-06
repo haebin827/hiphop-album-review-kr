@@ -28,7 +28,7 @@
     @RequiredArgsConstructor
     public class AuthController {
 
-        private final AuthService as;
+        private final AuthService authSvc;
         private final UserService us;
         private final EmailService es;
 
@@ -120,7 +120,7 @@
             }
 
             // 회원가입 완료 처리
-            as.registerUser(tempUser);
+            authSvc.registerUser(tempUser);
 
             // 세션 초기화
             session.removeAttribute("verificationCode");
@@ -186,7 +186,7 @@
             // 회원가입 이메일 인증 처리
             if (requestSource.equals("register") && tempUser != null) {
                 log.info("회원가입 이메일 인증 처리");
-                as.registerUser(tempUser);
+                authSvc.registerUser(tempUser);
 
                 // 세션 초기화
                 session.removeAttribute("verificationCode");

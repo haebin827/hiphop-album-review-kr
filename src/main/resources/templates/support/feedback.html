@@ -50,10 +50,33 @@
             </div>
         </form>
     </div>
+
+    <!-- 제출 완료 Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center" style="line-height: 1.7; padding: 20px; margin-bottom: 0px;">
+                    작성하신 피드백이 성공적으로 제출되었습니다.<br>
+                </div>
+                <div class="modal-footer" style="justify-content: center; padding-top: 0;">
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: black; color: white; border-radius: 0; padding: 8px 18px;">
+                        닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
-    // JavaScript를 사용하여 폼 유효성 검사를 수행합니다.
+
+    var result = /*[[${success}]]*/ false;
+    if (result) {
+        var modal = new bootstrap.Modal(document.querySelector("#successModal"));
+        modal.show();
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById('feedbackForm');
         form.addEventListener('submit', function (event) {

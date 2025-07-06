@@ -16,6 +16,13 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    // ---------------------------------
+    // name:
+    //
+    // ROLE_GUEST
+    // ROLE_USER
+    // ROLE_ADMIN
+    // ---------------------------------
     @Column(nullable = false, unique = true)
-    private String name; // ROLE_GUEST, ROLE_USER, ROLE_ADMIN
+    private String name;
 }

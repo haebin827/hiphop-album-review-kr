@@ -1,5 +1,6 @@
 package io.github.haebin827.hiphopreview.kr.dto;
 
+import io.github.haebin827.hiphopreview.kr.domain.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,6 +24,8 @@ public class ArtistRequestDTO {
     //@NotNull
     //private Integer userId;
 
+    private User user;
+
     @NotEmpty(message = "아티스트 명은 필수 입력 항목입니다.")
     private String name;
 
@@ -44,6 +47,10 @@ public class ArtistRequestDTO {
     private String tags;
 
     private MultipartFile image;
+
+    private String s3url;
+
+    private String uuid;
 
     @Size(max = 1000)
     private String note;
